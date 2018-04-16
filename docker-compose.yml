@@ -1,0 +1,19 @@
+version: "3.3"
+services:
+  continuum:
+    build:
+      context: .
+      dockerfile: Dockerfile-continuum-production-ubuntu-1404
+    depends_on:
+      - mongodb
+    links:
+      - mongodb
+    ports:
+      - "9090:8080"
+    command: bash
+  mongodb:
+    build:
+      context: .
+      dockerfile: Dockerfile-mongo-34
+    expose:
+      - "27017"

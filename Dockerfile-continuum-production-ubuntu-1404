@@ -1,0 +1,46 @@
+FROM ubuntu:14.04
+LABEL maintainer ="a.guillermo.guzman@gmail.com"
+
+
+RUN apt-get update -y && \
+    apt-get upgrade -y && \
+    # curl
+    apt-get install -y curl && \
+    # C
+    apt-get install -y build-essential && \
+    # These may be unnecessary for the production machine...
+    apt-get install -y libkrb5-dev libldap2-dev libsasl2-dev libssl-dev libffi-dev
+
+# Install MongoDB 3.4
+#RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6
+#RUN echo "deb [ arch=amd64 ] http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.4 multiverse" >> /etc/apt/sources.list.d/mongodb-org-3.4.list
+#RUN apt-get update && \
+#    apt-get install -y mongodb-org
+#RUN mkdir -p /data/db && \
+#    mkdir -p /var/log/ && \
+#    touch /var/log/mongod.log
+
+# Download and build latest version of Python
+RUN set -ex && \
+    cd /usr/src && \
+    curl -O https://www.python.org/ftp/python/2.7.14/Python-2.7.14.tgz && \
+    tar xvzf Python-2.7.14.tgz && \
+    cd Python-2.7.14 && \
+    ./configure && \
+    make install
+
+WORKDIR /tmp
+
+ADD continuum-18.0.2.4-S-64886-testing-ssl-with-thirdparty-fix-installer.sh .
+
+RUN set -xe && \
+    chmod +x continuum-18.0.2.4-S-64886-testing-ssl-with-thirdparty-fix-installer.sh && \
+    ./continuum-18.0.2.4-S-64886-testing-ssl-with-thirdparty-fix-installer.sh -m -p -s
+
+ENV CONTINUUM_HOME=/opt/continuum/current
+
+#EXPOSE 8181:8080
+# running mongo now but will remove this for a localhost instance of mongodb
+#CMD mongod
+#CMD /opt/continuum/current/common/install/init_mongodb.py -p n813KLVh7sLowt08A66tEQ==
+CMD /bin/bash
