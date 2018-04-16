@@ -31,11 +31,19 @@ RUN set -ex && \
 
 WORKDIR /tmp
 
-ADD continuum-18.0.2.4-S-64886-testing-ssl-with-thirdparty-fix-installer.sh .
+ADD continuum-18.0.2.1-D-13439-pipelines-dont-run-with-empty-feature-toggle-installer.sh .
+
+RUN apt-get install -y sudo
+
+ARG CONTINUUM_INSTALLER_LINK
 
 RUN set -xe && \
-    chmod +x continuum-18.0.2.4-S-64886-testing-ssl-with-thirdparty-fix-installer.sh && \
-    ./continuum-18.0.2.4-S-64886-testing-ssl-with-thirdparty-fix-installer.sh -m -p -s
+    cd /tmp && \
+    curl -o install.sh $CONTINUUM_INSTALLER_LINK && \
+    chmod +x install.sh && \
+    ./install.sh -m -p -s
+
+# Download installer
 
 ENV CONTINUUM_HOME=/opt/continuum/current
 
