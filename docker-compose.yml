@@ -11,10 +11,23 @@ services:
     ports:
       - "9090:8080"
     command: >
-      /bin/bash -c "source ~/.profile
+      /bin/bash -c "sleep 10
+      && source ~/.profile
       && export CONTINUUM_HOME=/opt/continuum/current
       && ctm-restart-services
       && tail -f /var/continuum/log/ctm-ui.log"
+#  continuum_db_init:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile-continuum-production-ubuntu-1404
+#    depends_on:
+#      - mongodb
+#    links:
+#      - mongodb
+#    command: >
+#      /bin/bash -c "source ~/.profile
+#      && export CONTINUUM_HOME=/opt/continuum/current
+#      && /opt/continuum/python/bin/python /opt/continuum/current/common/install/init_mongodb.py -p n813KLVh7sLowt08A66tEQ=="
   mongodb:
     build:
       context: .
