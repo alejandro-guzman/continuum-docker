@@ -10,7 +10,11 @@ services:
       - mongodb
     ports:
       - "9090:8080"
-    command: bash
+    command: >
+      /bin/bash -c "source ~/.profile
+      && export CONTINUUM_HOME=/opt/continuum/current
+      && ctm-restart-services
+      && tail -f /var/continuum/log/ctm-ui.log"
   mongodb:
     build:
       context: .
