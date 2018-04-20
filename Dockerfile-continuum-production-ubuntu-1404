@@ -30,10 +30,10 @@ RUN set -xe && \
     chmod +x install.sh && \
     sed -i 's/source ${WHICHPROFILE}//g' install.sh && \
     ./install.sh -m -p -s && \
-    echo '  mongo_server: mongodb' >> /etc/continuum/continuum.yaml
+    echo '  mongodb_server: mongodb' >> /etc/continuum/continuum.yaml
 
 ENV CONTINUUM_HOME=/opt/continuum/current
 
 EXPOSE 9090:8080
 
-CMD /opt/continuum/current/common/install/init_mongodb.py -p n813KLVh7sLowt08A66tEQ==
+CMD ["/opt/continuum/current/common/install/init_mongodb.py", "-p", "n813KLVh7sLowt08A66tEQ=="]
