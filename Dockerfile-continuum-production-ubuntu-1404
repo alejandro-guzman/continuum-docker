@@ -10,6 +10,10 @@ RUN apt-get update -y && \
     apt-get install -y build-essential && \
     # These may be unnecessary for the production machine...
     apt-get install -y libkrb5-dev libldap2-dev libsasl2-dev libssl-dev libffi-dev
+    # python
+    # This will install an older version of python and pip
+#    apt-get install -y python2.7 python-pip python-dev
+
 
 # Download and build latest version of Python
 RUN set -ex && \

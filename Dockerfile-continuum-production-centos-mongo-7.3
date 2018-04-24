@@ -1,0 +1,43 @@
+FROM centos:7.3
+LABEL maintainer ="a.guillermo.guzman@gmail.com"
+
+
+RUN yum -y update && \
+    yum -y install epel-release && \
+    yum -y install make gcc curl && \
+    # C libs supporting thirdparty python deps
+    yum -y install libffi-devel krb5-devel openldap-devel openssl-devel
+
+# Install MongoDB 3.4
+#RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6
+#RUN echo "deb [ arch=amd64 ] http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.4 multiverse" >> /etc/apt/sources.list.d/mongodb-org-3.4.list
+#RUN apt-get update && \
+#    apt-get install -y mongodb-org
+#RUN mkdir -p /data/db && \
+#    mkdir -p /var/log/ && \
+#    touch /var/log/mongod.log
+
+# Download and build latest version of Python
+RUN set -ex && \
+    cd /usr/src && \
+    curl -O https://www.python.org/ftp/python/2.7.14/Python-2.7.14.tgz && \
+    tar xvzf Python-2.7.14.tgz && \
+    cd Python-2.7.14 && \
+    ./configure && \
+    make install
+
+WORKDIR /tmp
+
+ARG CONTINUUM_INSTALLER_LINK
+
+RUN set -xe && \
+    cd /tmp && \
+    curl -o install.sh $CONTINUUM_INSTALLER_LINK && \
+    chmod +x install.sh && \
+    ./install.sh -m -p -s
+
+ENV CONTINUUM_HOME=/opt/continuum/current
+
+EXPOSE 9090:8080
+
+#CMD mongod

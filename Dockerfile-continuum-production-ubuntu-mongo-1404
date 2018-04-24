@@ -37,8 +37,8 @@ RUN set -xe && \
     cd /tmp && \
     curl -o install.sh $CONTINUUM_INSTALLER_LINK && \
     chmod +x install.sh && \
-    sed -i 's/source ${WHICHPROFILE}//g' install.sh && \
-    ./install.sh -m -p -s
+    sed -i 's/source ${WHICHPROFILE}//g' install.sh
+#    ./install.sh -m -p -s
 
 ENV CONTINUUM_HOME=/opt/continuum/current
 
