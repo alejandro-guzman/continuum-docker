@@ -5,9 +5,9 @@ LABEL maintainer ="a.guillermo.guzman@gmail.com"
 RUN apt-get update -y && \
     apt-get upgrade -y && \
     # curl
-    apt-get install -y sudo curl && \
+    apt-get install -y curl && \
     # C
-    apt-get install -y build-essential && \
+    apt-get install -y build-essential sudo && \
     # These may be unnecessary for the production machine...
     apt-get install -y libkrb5-dev libldap2-dev libsasl2-dev libssl-dev libffi-dev
 
