@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
+installer_link=$1
 
 function build {
     docker image build \
         --tag continuum-prod \
-        --build-arg INSTALLER=$1 \
+        --build-arg INSTALLER=${installer_link} \
         --file Dockerfile-continuum \
         .
 }

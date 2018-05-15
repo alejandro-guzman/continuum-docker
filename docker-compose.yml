@@ -3,13 +3,15 @@ services:
   continuum:
     build:
       context: .
-      dockerfile: Dockerfile-continuum-production-ubuntu-1404
+      dockerfile: Dockerfile-continuum
+      args:
+        INSTALLER: "https://s3.amazonaws.com/versionone-builds/continuum/installer/continuum-18.1.1.23-S-64886-testing-ssl-with-thirdparty-fix-installer.sh"
     depends_on:
       - mongodb
     links:
       - mongodb
     ports:
-      - "9090:8080"
+      - "5000:8080"
     command: >
       /bin/bash -c "sleep 10
       && source ~/.profile
