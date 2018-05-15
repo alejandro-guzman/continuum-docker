@@ -1,4 +1,4 @@
-# continuunm-docker
+# continuum-docker
 
 ## Purpose:
 To declare a the initial environment for a Continuum supported image for Voltron.
