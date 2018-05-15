@@ -7,7 +7,7 @@ RUN apt-get update -y && \
     # curl
     apt-get install -y curl && \
     # C
-    apt-get install -y build-essential sudo && \
+    apt-get install -y build-essential sudo cron && \
     # These may be unnecessary for the production machine...
     apt-get install -y libkrb5-dev libldap2-dev libsasl2-dev libssl-dev libffi-dev
 
