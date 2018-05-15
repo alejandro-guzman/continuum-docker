@@ -21,13 +21,7 @@ RUN mkdir -p /data/db && \
     touch /var/log/mongod.log
 
 # Download and build latest version of Python
-RUN set -ex && \
-    cd /usr/src && \
-    curl -O https://www.python.org/ftp/python/2.7.14/Python-2.7.14.tgz && \
-    tar xvzf Python-2.7.14.tgz && \
-    cd Python-2.7.14 && \
-    ./configure && \
-    make install
+RUN apt-get install -y python python-dev python-pip
 
 WORKDIR /tmp
 
