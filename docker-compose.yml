@@ -8,6 +8,7 @@ services:
         INSTALLER: "https://s3.amazonaws.com/versionone-builds/continuum/installer/continuum-18.1.1.23-S-64886-testing-ssl-with-thirdparty-fix-installer.sh"
     depends_on:
       - mongodb
+      - continuum_db_init
     links:
       - mongodb
     ports:
