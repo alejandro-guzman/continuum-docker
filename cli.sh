@@ -1,22 +1,22 @@
 #!/usr/bin/env bash
 
 
-function build_ubuntu14 {
-
+function build {
     docker image build \
-        --tag ctm-ubuntu-14 \
-        --file Dockerfile-continuum-production-ubuntu-mongo-1404 \
+        --tag continuum-prod \
+        --build-arg INSTALLER=$1 \
+        --file Dockerfile-continuum \
         .
+}
 
+function run {
     docker container run \
         --rm \
-        --name ctm-ubuntu-14-container \
-        --publish 127.0.0.1:9090:8080 \
-        ctm-ubuntu-14
+        --name continuum-prod-run \
+        --publish 127.0.0.1:5000:8080 \
+        continuum-prod
 }
 
-function compose_14 {
+function compose {
     docker-compose up --build
 }
-
-
