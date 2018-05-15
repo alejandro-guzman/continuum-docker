@@ -33,6 +33,6 @@ services:
   mongodb:
     build:
       context: .
-      dockerfile: Dockerfile-mongo-34
+      dockerfile: Dockerfile-mongo
     expose:
       - "27017"
