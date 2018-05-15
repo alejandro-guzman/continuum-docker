@@ -1,5 +1,6 @@
 version: "3.3"
 services:
+
   continuum:
     build:
       context: .
@@ -19,18 +20,22 @@ services:
       && export CONTINUUM_HOME=/opt/continuum/current
       && ctm-restart-services
       && tail -f /var/continuum/log/ctm-ui.log"
-#  continuum_db_init:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile-continuum-production-ubuntu-1404
-#    depends_on:
-#      - mongodb
-#    links:
-#      - mongodb
-#    command: >
-#      /bin/bash -c "source ~/.profile
-#      && export CONTINUUM_HOME=/opt/continuum/current
-#      && /opt/continuum/python/bin/python /opt/continuum/current/common/install/init_mongodb.py -p n813KLVh7sLowt08A66tEQ=="
+
+  continuum_db_init:
+    build:
+      context: .
+      dockerfile: Dockerfile-continuum
+      args:
+        INSTALLER: "https://s3.amazonaws.com/versionone-builds/continuum/installer/continuum-18.1.1.23-S-64886-testing-ssl-with-thirdparty-fix-installer.sh"
+    depends_on:
+      - mongodb
+    links:
+      - mongodb
+    command: >
+      /bin/bash -c "source ~/.profile
+      && export CONTINUUM_HOME=/opt/continuum/current
+      && /opt/continuum/python/bin/python /opt/continuum/current/common/install/init_mongodb.py -p n813KLVh7sLowt08A66tEQ=="
+
   mongodb:
     build:
       context: .
