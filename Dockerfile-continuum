@@ -39,6 +39,8 @@ RUN set -xe && \
 
 ENV CONTINUUM_HOME=/opt/continuum/current
 
+ADD run.sh ./
+
 EXPOSE 9090:8080
 
-CMD ["/opt/continuum/current/common/install/init_mongodb.py", "-p", "n813KLVh7sLowt08A66tEQ=="]
+CMD ["./run.sh"]
