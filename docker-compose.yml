@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile-continuum
       args:
-        INSTALLER: "https://s3.amazonaws.com/versionone-builds/continuum/installer/continuum-18.1.1.176-development-installer.sh"
+        INSTALLER: ""
     depends_on:
       - mongodb
 #      - continuum_db_init
