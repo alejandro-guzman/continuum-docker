@@ -12,6 +12,9 @@ export CONTINUUM_HOME=/opt/continuum/current
 # Setup up DB
 if [ ! -f "/var/continuum/db_configured" ]; then
     echo "Setting up Continuum DB..."
+    # Set correct server host
+    echo "  mongodb_server: ${MONGODB_HOST}" >> /etc/continuum/continuum.yaml
+    echo "  mongodb_password: ${MONGODB_PASSWORD}" >> /etc/continuum/continuum.yaml
     # Run DB initialization
     /opt/continuum/python/bin/python \
         /opt/continuum/current/common/install/init_mongodb.py -p "n813KLVh7sLowt08A66tEQ=="
