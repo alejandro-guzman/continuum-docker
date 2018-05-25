@@ -33,7 +33,7 @@ RUN set -xe && \
     # Installation wasn't successful until source line was removed
     sed -i 's/source ${WHICHPROFILE}//g' install.sh && \
     # Silent, skip data initialization, skip starting services
-    ./install.sh -m -p -s && \
+    ./install.sh -m -p -s
     # Edit continuum.yaml to point to mongo service
     # echo '  mongodb_server: mongodb' >> /etc/continuum/continuum.yaml
 
