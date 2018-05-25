@@ -35,7 +35,7 @@ RUN set -xe && \
     # Silent, skip data initialization, skip starting services
     ./install.sh -m -p -s && \
     # Edit continuum.yaml to point to mongo service
-    echo '  mongodb_server: mongodb' >> /etc/continuum/continuum.yaml
+    # echo '  mongodb_server: mongodb' >> /etc/continuum/continuum.yaml
 
 ENV CONTINUUM_HOME=/opt/continuum/current
 
