@@ -1,14 +1,14 @@
 # continuum-docker
 
 ## Purpose:
-Declare environment for a Continuum image for Voltron.
+Declare environment for a Continuum image for Ossum.
 
 ## Improvements to be made:
 Build a smaller image using a different base image. ex `FROM python:2.7.15-alpine3.7`  
 Note: currently 950MB
 
 ## How to use
-### Building image
+### Build image
 ```bash
 docker image build \
     --tag continuum-production \
@@ -16,7 +16,7 @@ docker image build \
     --file Dockerfile-continuum \
     .
 ```
-### Running
+### Run
 ```bash
 docker containerrun \
     --rm \
