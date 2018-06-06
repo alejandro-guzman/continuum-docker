@@ -4,11 +4,8 @@ LABEL maintainer ="a.guillermo.guzman@gmail.com"
 
 RUN apt-get update -y && \
     apt-get upgrade -y && \
-    # curl
     apt-get install -y curl && \
-    # C
     apt-get install -y build-essential sudo cron && \
-    # These may be unnecessary for the production machine...
     apt-get install -y libkrb5-dev libldap2-dev libsasl2-dev libssl-dev libffi-dev
 
 # Download and build latest version of Python
@@ -20,8 +17,6 @@ RUN set -ex && \
     ./configure && \
     make install
 
-WORKDIR /tmp
-
 ARG INSTALLER=""
 ENV MY_CTM_INSTALLER=$INSTALLER
 
@@ -32,15 +27,15 @@ RUN set -xe && \
     chmod +x install.sh && \
     # Installation wasn't successful until source line was removed
     sed -i 's/source ${WHICHPROFILE}//g' install.sh && \
-    # Silent, skip data initialization, skip starting services
+    # -s silent, -m skip data initialization, -p skip starting services
     ./install.sh -m -p -s
-    # Edit continuum.yaml to point to mongo service
-    # echo '  mongodb_server: mongodb' >> /etc/continuum/continuum.yaml
 
-ENV CONTINUUM_HOME=/opt/continuum/current
+ENV APP=/opt/continuum/current
+WORKDIR $APP
 
-ADD run.sh ./
+ADD ./entrypoint.sh $APP
 
-EXPOSE 9090:8080
+EXPOSE 8080
 
-CMD ["./run.sh"]
+ENTRYPOINT ["/opt/continuum/current/entrypoint.sh"]
+CMD ["ctm-start-services"]
