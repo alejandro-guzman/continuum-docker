@@ -1,13 +1,16 @@
 #!/usr/bin/env bash
 
 set -e
-echo "Starting Continuum..."
 
-sleep 5s
-# Make sure ENV is set correctly
-source ~/.profile
-export CONTINUUM_HOME=/opt/continuum/current
-#while true; do sleep 10s; done  # Debugging
+if [ -f ~/.profile ]; then
+    echo "Sourcing profile"
+    source ~/.profile
+fi
+
+if [ -z ${CONTINUUM_HOME+x} ]; then
+    echo "Setting CONTINUUM_HOME"
+    export CONTINUUM_HOME=/opt/continuum/current
+fi
 
 # Setup up DB
 if [ ! -f "/var/continuum/db_configured" ]; then
