@@ -2,11 +2,15 @@
 
 set -e
 
-installer=$1
-source ./cli.sh ${installer}; build
+INSTALLER_LINK=$1
 
-repo=$2  # ex: "foo.dkr.ecr.us-east-1.amazonaws.com/continuum"
-tag=$3
-docker image tag continuum-prod:latest ${repo}:${tag}
+docker image build \
+    --tag continuum-prod \
+    --build-arg INSTALLER=${INSTALLER_LINK} \
+    --file Dockerfile-continuum \
+    .
+REPO=$2  # ex: "foo.dkr.ecr.us-east-1.amazonaws.com/continuum"
+TAG=$3  # defaults to latest
 
-docker push ${repo}
+docker image tag continuum-prod:latest ${REPO}:${TAG}
+docker push ${REPO}
