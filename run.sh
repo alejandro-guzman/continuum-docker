@@ -25,7 +25,5 @@ if [ ! -f "/var/continuum/db_configured" ]; then
     touch /var/continuum/db_configured
 fi
 
-# Start Continuum services
-ctm-restart-services
-# Keep container from exiting
-while true; do sleep 10s; done
+# https://stackoverflow.com/questions/39082768/what-does-set-e-and-exec-do-for-docker-entrypoint-scripts?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+exec "$@"
