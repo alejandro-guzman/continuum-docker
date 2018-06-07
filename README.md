@@ -18,10 +18,11 @@ docker image build \
 ```
 ### Run
 ```bash
-docker containerrun \
+docker container run \
     --rm \
     --name continuum \
     --publish 127.0.0.1:8080:8080 \
+    --publish 127.0.0.1:8083:8083 \
     continuum-production
 ```
 ### Compose
