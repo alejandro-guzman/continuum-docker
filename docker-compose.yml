@@ -11,13 +11,8 @@ services:
     links:
       - mongodb
     ports:
-      - "5000:8080"
-#    command: >
-#      /bin/bash -c "sleep 10
-#      && source ~/.profile
-#      && export CONTINUUM_HOME=/opt/continuum/current
-#      && ctm-restart-services
-#      && tail -f /var/continuum/log/ctm-ui.log"
+      - "8080:8080"
+      - "8083:8083"
   mongodb:
     image: mongo
     volumes:

@@ -40,7 +40,8 @@ WORKDIR $APP
 
 ADD ./entrypoint.sh $APP
 
-EXPOSE 8080
+# ui and messagehub
+EXPOSE 8080 8083
 
 ENTRYPOINT ["/opt/continuum/current/entrypoint.sh"]
 CMD ["ctm-start-services"]
