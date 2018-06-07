@@ -21,7 +21,7 @@ services:
 #      CONTINUUM_MONGODB_PASSWORD: continuum
 #      CONTINUUM_MONGODB_AUTH: continuum
   mongodb:
-    image: mongo
+    image: mongo:3.6-jessie
     volumes:
       - mongodb-data:/data/db
 #    environment:
