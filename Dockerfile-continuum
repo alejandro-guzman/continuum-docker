@@ -2,11 +2,16 @@ FROM ubuntu:16.04
 LABEL maintainer ="a.guillermo.guzman@gmail.com"
 
 
-RUN apt-get update -y && \
-    apt-get upgrade -y && \
-    apt-get install -y curl && \
-    apt-get install -y build-essential sudo cron && \
-    apt-get install -y libkrb5-dev libldap2-dev libsasl2-dev libssl-dev libffi-dev
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    cron \
+    curl \
+    libffi-dev \
+    libkrb5-dev \
+    libldap2-dev \
+    libsasl2-dev \
+    libssl-dev \
+    sudo
 
 # Download and build latest version of Python
 RUN set -ex && \
