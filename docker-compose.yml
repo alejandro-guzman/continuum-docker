@@ -22,7 +22,7 @@ services:
 #      CONTINUUM_MONGODB_AUTH: continuum
     command: >
       /bin/bash -c "
-        ctm-restart-services &&
+        ctm-start-services &&
         tail -f /var/continuum/log/ctm-ui.log
       "
   mongodb:
