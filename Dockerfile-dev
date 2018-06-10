@@ -1,0 +1,44 @@
+FROM ubuntu:16.04
+LABEL maintainer ="a.guillermo.guzman@gmail.com"
+
+
+RUN apt-get update && apt-get install -y \
+    cron \
+    curl \
+    libffi-dev \
+    libkrb5-dev \
+    libldap2-dev \
+    libsasl2-dev \
+    libssl-dev \
+    python \
+    python-pip \
+    sudo
+
+COPY ./requirements.txt /
+RUN pip install --upgrade pip==9 && \
+    pip install --no-cache-dir -r requirements.txt
+
+ARG INSTALLER
+
+RUN set -xe && \
+    cd /tmp && \
+    # Download installer
+    curl -o install.sh $INSTALLER && \
+    chmod +x install.sh && \
+    # Installation wasn't successful until source line was removed
+    sed -i '/source ${WHICHPROFILE}/d' install.sh && \
+    # -s silent, -m skip data initialization, -p skip starting services
+    ./install.sh -m -p -s
+
+ENV APP /opt/continuum/current
+WORKDIR $APP
+
+RUN rm -rf $APP/*
+
+ADD ./entrypoint.sh /
+
+# ui and messagehub
+EXPOSE 8080 8083
+
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["ctm-start-services"]
