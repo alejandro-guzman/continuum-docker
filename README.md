@@ -30,3 +30,14 @@ docker container run \
 docker-compose pull && \
 docker-compose up --build
 ```
+### Development
+Make sure `$CONTINUUM_HOME` points to the root of your cloned continuum repo.  
+At the moment this still requires you to run the webpack dev server on your 
+machine.   
+`npm run server`
+```bash
+docker-compose pull && \
+docker-compose \
+    --file docker-compose-dev.yml \
+    up --build
+```
