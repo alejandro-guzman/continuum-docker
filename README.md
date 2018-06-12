@@ -30,3 +30,24 @@ docker container run \
 docker-compose pull && \
 docker-compose up --build
 ```
+### Development
+Make sure `$CONTINUUM_HOME` points to the root of your cloned continuum repo.  
+At the moment this still requires you to run the webpack dev server on your 
+machine.   
+`npm run server`
+```bash
+docker-compose pull && \
+docker-compose \
+    --file docker-compose-dev.yml \
+    up --build
+```
+#### How to improve Development
+* Get webpack dev server running in its own container
+* Don't rely on installer to setup environment
+* Remove unnecessary C deps in image. We'd need to test which ones are truly
+ necessary for running (as opposed to just building thirdparties)
+* Better security with a dedicated app user (not sure how beneficial this 
+ is in a dev environment)
+* Reduce image size by using python base image instead of ubuntu
+* Make configuration something is mounted to allow changes without needing 
+to rebuild/restart.
