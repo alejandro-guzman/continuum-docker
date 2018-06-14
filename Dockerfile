@@ -35,5 +35,8 @@ ADD ./entrypoint.sh $APP
 # ui and messagehub
 EXPOSE 8080 8083
 
+HEALTHCHECK --start-period=3s --interval=10s --timeout=1s --retries=3 \
+    CMD curl --fail http://localhost:8080/ || exit 1
+
 ENTRYPOINT ["/opt/continuum/current/entrypoint.sh"]
 CMD ["ctm-start-services"]
