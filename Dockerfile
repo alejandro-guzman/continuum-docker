@@ -11,16 +11,8 @@ RUN apt-get update && apt-get install -y \
     libldap2-dev \
     libsasl2-dev \
     libssl-dev \
+    python \
     sudo
-
-# Download and build latest version of Python
-RUN set -ex && \
-    cd /usr/src && \
-    curl -O https://www.python.org/ftp/python/2.7.14/Python-2.7.14.tgz && \
-    tar xvzf Python-2.7.14.tgz && \
-    cd Python-2.7.14 && \
-    ./configure && \
-    make install
 
 ARG INSTALLER=""
 ENV MY_CTM_INSTALLER=$INSTALLER
