@@ -14,8 +14,9 @@ docker image build \
     --tag continuum-production \
     --build-arg INSTALLER=<url_to_installer> \
     --file Dockerfile-continuum \
-    .
+    "$PWD"
 ```
+
 ### Run
 ```bash
 docker container run \
@@ -25,11 +26,17 @@ docker container run \
     --publish 127.0.0.1:8083:8083 \
     continuum-production
 ```
+This requires MongoDB to be running and accessible to the Continuum container.
+
 ### Compose
 ```bash
 docker-compose pull && \
 docker-compose up --build
 ```
+Continuum should now be available at http://localhost:8080  
+Default login: administrator/password  
+Enjoy!
+
 ### Development
 Make sure `$CONTINUUM_HOME` points to the root of your cloned continuum repo.  
 At the moment this still requires you to run the webpack dev server on your 
@@ -41,6 +48,7 @@ docker-compose \
     --file docker-compose-dev.yml \
     up --build
 ```
+
 #### How to improve Development
 * Get webpack dev server running in its own container
 * Don't rely on installer to setup environment
