@@ -39,9 +39,14 @@ Enjoy!
 
 ### Development
 Make sure `$CONTINUUM_HOME` points to the root of your cloned continuum repo.  
+```bash
+export CONTINUUM_HOME=/path/to/continuum/repo
+```
 At the moment this still requires you to run the webpack dev server on your 
 machine.   
-`npm run server`
+```bash
+cd $CONTINUUM_HOME && npm run server
+```
 ```bash
 docker-compose pull && \
 docker-compose \
