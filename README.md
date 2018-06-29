@@ -48,6 +48,9 @@ docker-compose \
     --file docker-compose-dev.yml \
     up --build
 ```
+Continuum should now be available at http://localhost:9000  
+Default login: administrator/password  
+Happy dev-ing!
 
 #### How to improve Development
 * Get webpack dev server running in its own container
