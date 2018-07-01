@@ -1,42 +1,35 @@
 FROM ubuntu:16.04
-LABEL maintainer ="a.guillermo.guzman@gmail.com"
-
+LABEL maintainer="a.guillermo.guzman@gmail.com"
 
 RUN apt-get update && apt-get install -y \
-    build-essential \
-    cron \
-    curl \
-    libffi-dev \
-    libkrb5-dev \
-    libldap2-dev \
-    libsasl2-dev \
-    libssl-dev \
-    python \
-    sudo
+    curl=7.47.0-1ubuntu2.8 \
+    # Enables Tasks to connect via SSH
+    openssh-client=1:7.2p2-4ubuntu2.4 \
+    python=2.7.12-1~16.04 \
+    sudo=1.8.16-0ubuntu1.5
 
-ARG INSTALLER=""
-ENV MY_CTM_INSTALLER=$INSTALLER
+ARG INSTALLER
+LABEL installer="$INSTALLER"
 
-RUN set -xe && \
-    cd /tmp && \
-    # Download installer
-    curl -o install.sh $INSTALLER && \
-    chmod +x install.sh && \
+WORKDIR /tmp
+RUN set -x ; \
+    curl --silent --output ./install.sh $INSTALLER ; \
+    chmod +x ./install.sh ; \
     # Installation wasn't successful until source line was removed
-    sed -i '/source ${WHICHPROFILE}/d' install.sh && \
+    sed -i '/source ${WHICHPROFILE}/d' ./install.sh ; \
     # -s silent, -m skip data initialization, -p skip starting services
     ./install.sh -m -p -s
 
-ENV APP=/opt/continuum/current
-WORKDIR $APP
+ENV APP_HOME=/opt/continuum/current
+WORKDIR $APP_HOME
 
-ADD ./entrypoint.sh $APP
+ADD ./entrypoint.sh $APP_HOME
 
-# ui and messagehub
+# UI and messagehub ports
 EXPOSE 8080 8083
 
 HEALTHCHECK --start-period=3s --interval=10s --timeout=1s --retries=3 \
-    CMD curl --fail http://localhost:8080/ || exit 1
+    CMD curl --fail http://localhost:8080 || exit 1
 
-ENTRYPOINT ["/opt/continuum/current/entrypoint.sh"]
-CMD ["ctm-start-services"]
+ENTRYPOINT ["./entrypoint.sh"]
+CMD ["$APP_HOME/common/bin/ctm-start-services"]
