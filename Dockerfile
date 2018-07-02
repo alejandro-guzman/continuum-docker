@@ -29,11 +29,13 @@ ENV LD_LIBRARY_PATH=$ORACLE_HOME
 WORKDIR $CONTINUUM_HOME
 
 ADD ./entrypoint.sh $CONTINUUM_HOME
+ADD ./healthcheck.py $CONTINUUM_HOME
+
 # UI and messagehub ports
 EXPOSE 8080 8083
 
-HEALTHCHECK --start-period=3s --interval=10s --timeout=1s --retries=3 \
-    CMD curl --fail http://localhost:8080 || exit 1
+HEALTHCHECK --start-period=3s --interval=3s --reties=3  \
+    CMD ["python", "./healthcheck.py"]
 
 ENTRYPOINT ["./entrypoint.sh"]
 CMD ["$CONTINUUM_HOME/common/bin/ctm-start-services"]
