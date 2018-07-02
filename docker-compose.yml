@@ -1,18 +1,14 @@
 version: "3.3"
 services:
+
   continuum:
     build:
-      context: .
-      dockerfile: Dockerfile
       args:
         INSTALLER: "https://s3.amazonaws.com/versionone-builds/continuum/installer/continuum-18.1.2.5-S-65321-mongo-support-envvars-installer.sh"
+      context: .
+      dockerfile: Dockerfile
     depends_on:
       - mongodb
-    links:
-      - mongodb
-    ports:
-      - "8080:8080"
-      - "8083:8083"
     environment:
       CONTINUUM_MONGODB_SERVER: mongodb
       CONTINUUM_MONGODB_PORT: 27017
@@ -20,17 +16,19 @@ services:
       CONTINUUM_MONGODB_USERNAME: continuum
       CONTINUUM_MONGODB_PASSWORD: jQnkhqV13qC4W3iqiVMu8A==  # continuum
       CONTINUUM_MONGODB_AUTH: admin
-    command: >
-      /bin/bash -c "
-        ctm-start-services &&
-        tail -f /var/continuum/log/ctm-ui.log
-      "
+    links:
+      - mongodb
+    ports:
+      - "8080:8080"
+      - "8083:8083"
+
   mongodb:
-    image: mongo:3.6-jessie
-    volumes:
-      - mongodb-data:/data/db
     environment:
       MONGO_INITDB_ROOT_USERNAME: continuum
       MONGO_INITDB_ROOT_PASSWORD: continuum
+    image: mongo:3.6-jessie
+    volumes:
+      - mongodb-data:/data/db
+
 volumes:
   mongodb-data:
