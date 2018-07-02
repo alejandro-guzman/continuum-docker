@@ -14,13 +14,15 @@ fi
 
 # Setup up DB
 if [ -z ${SKIP_DATABASE} ]; then
-    echo "Setting Continuum DB"
-    # Remove mongodb_database setting from config file, environment variables passed in will handle mongo settings
+    echo "Initializing and running upgrades on Continuum database.."
+    # Remove mongodb_database setting from config file, environment 
+    # variables passed in will handle Mongo settings
     sed -i '/mongodb_database/d' /etc/continuum/continuum.yaml
 
     DEFAULT_ADMIN_PASSWORD="n813KLVh7sLowt08A66tEQ=="  # "password"
-    ${CONTINUUM_HOME}/common/install/init_mongodb.py --password $DEFAULT_ADMIN_PASSWORD || ${CONTINUUM_HOME}/common/updatedb.py
-    echo "Done setting Continuum DB"
+    ${CONTINUUM_HOME}/common/install/init_mongodb.py \
+        --password $DEFAULT_ADMIN_PASSWORD || \
+    ${CONTINUUM_HOME}/common/updatedb.py
 fi
 
 # File corruption always causing login issues.
