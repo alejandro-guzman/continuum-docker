@@ -5,7 +5,7 @@ Declare environment for a Continuum image for Ossum.
 
 ## Improvements to be made:
 Build a smaller image using a different base image. ex `FROM python:2.7.15-alpine3.7`  
-Note: currently 572MB
+Note: currently 468MB
 
 ## How to use
 ### Build image
@@ -13,7 +13,7 @@ Note: currently 572MB
 docker image build \
     --tag continuum-production \
     --build-arg INSTALLER=<url_to_installer> \
-    --file Dockerfile-continuum \
+    --file Dockerfile \
     "$PWD"
 ```
 
