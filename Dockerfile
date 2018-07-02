@@ -28,11 +28,20 @@ ENV LD_LIBRARY_PATH="$ORACLE_HOME" \
 
 WORKDIR $CONTINUUM_HOME
 
-ADD ./entrypoint.sh $CONTINUUM_HOME
-ADD ./healthcheck.py $CONTINUUM_HOME
+RUN groupadd --gid 999 ctmuser && \
+    useradd --uid 999 --gid ctmuser --groups root --create-home ctmuser && \
+    chown --recursive ctmuser:root \
+    /opt/continuum \
+    /etc/continuum \
+    /var/continuum
+
+COPY --chown=ctmuser:root ./entrypoint.sh $CONTINUUM_HOME
+COPY --chown=ctmuser:root ./healthcheck.py $CONTINUUM_HOME
 
 # UI and messagehub ports
 EXPOSE 8080 8083
+
+USER ctmuser
 
 HEALTHCHECK --start-period=3s --interval=3s --retries=3  \
     CMD ["python", "./healthcheck.py"]
