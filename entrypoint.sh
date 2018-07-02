@@ -7,6 +7,11 @@ if [ -z ${CONTINUUM_HOME} ]; then
     exit 1
 fi
 
+if [ -z $(which ctm-start-services) ]; then
+    echo "Cannot find ctm-start-service command, exiting.."
+    exit 1
+fi
+
 # Setup up DB
 if [ -z ${SKIP_DATABASE} ]; then
     echo "Setting Continuum DB"

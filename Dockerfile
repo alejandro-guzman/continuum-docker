@@ -20,10 +20,10 @@ RUN set -x ; \
     # -s silent, -m skip data initialization, -p skip starting services
     ./install.sh -m -p -s
 
-ENV CONTINUUM_HOME="/opt/continuum/current" \
-    PATH="$CONTINUUM_HOME/common/bin:$CONTINUUM_HOME/client/bin:$PATH" \
-    ORACLE_HOME="$CONTINUUM_HOME/common/lib/instantclient_11_2" \
-    LD_LIBRARY_PATH="$ORACLE_HOME" \
+ENV CONTINUUM_HOME="/opt/continuum/current"
+ENV PATH="$CONTINUUM_HOME/common/bin:$CONTINUUM_HOME/client/bin:$PATH" \
+    ORACLE_HOME="$CONTINUUM_HOME/common/lib/instantclient_11_2"
+ENV LD_LIBRARY_PATH="$ORACLE_HOME" \
     SKIP_DATABASE=""
 
 WORKDIR $CONTINUUM_HOME
