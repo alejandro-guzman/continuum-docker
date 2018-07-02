@@ -20,11 +20,15 @@ RUN set -x ; \
     # -s silent, -m skip data initialization, -p skip starting services
     ./install.sh -m -p -s
 
-ENV APP_HOME=/opt/continuum/current
-WORKDIR $APP_HOME
+ENV CONTINUUM_HOME=/opt/continuum/current
+ENV PATH=$CONTINUUM_HOME/common/bin:$CONTINUUM_HOME/client/bin:$PATH
 
-ADD ./entrypoint.sh $APP_HOME
+ENV ORACLE_HOME=$CONTINUUM_HOME/common/lib/instantclient_11_2\
+ENV LD_LIBRARY_PATH=$ORACLE_HOME
 
+WORKDIR $CONTINUUM_HOME
+
+ADD ./entrypoint.sh $CONTINUUM_HOME
 # UI and messagehub ports
 EXPOSE 8080 8083
 
@@ -32,4 +36,4 @@ HEALTHCHECK --start-period=3s --interval=10s --timeout=1s --retries=3 \
     CMD curl --fail http://localhost:8080 || exit 1
 
 ENTRYPOINT ["./entrypoint.sh"]
-CMD ["$APP_HOME/common/bin/ctm-start-services"]
+CMD ["$CONTINUUM_HOME/common/bin/ctm-start-services"]
