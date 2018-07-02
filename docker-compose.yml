@@ -21,6 +21,8 @@ services:
     ports:
       - "8080:8080"
       - "8083:8083"
+    volumes:
+      - ctm-logs:/var/continuum
 
   mongodb:
     environment:
@@ -31,4 +33,5 @@ services:
       - mongodb-data:/data/db
 
 volumes:
+  ctm-logs:
   mongodb-data:
