@@ -37,6 +37,7 @@ RUN groupadd --gid 999 ctmuser && \
 
 COPY --chown=ctmuser:root ./entrypoint.sh $CONTINUUM_HOME
 COPY --chown=ctmuser:root ./healthcheck.py $CONTINUUM_HOME
+COPY --chown=ctmuser:root ./run.sh $CONTINUUM_HOME
 
 # UI and messagehub ports
 EXPOSE 8080 8083
@@ -47,4 +48,4 @@ HEALTHCHECK --start-period=3s --interval=3s --retries=3  \
     CMD ["python", "./healthcheck.py"]
 
 ENTRYPOINT ["./entrypoint.sh"]
-CMD ["$CONTINUUM_HOME/common/bin/ctm-start-services"]
+CMD ["/bin/bash", "-c", "run.sh"]
