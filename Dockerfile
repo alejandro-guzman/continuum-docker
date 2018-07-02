@@ -34,7 +34,7 @@ ADD ./healthcheck.py $CONTINUUM_HOME
 # UI and messagehub ports
 EXPOSE 8080 8083
 
-HEALTHCHECK --start-period=3s --interval=3s --reties=3  \
+HEALTHCHECK --start-period=3s --interval=3s --retries=3  \
     CMD ["python", "./healthcheck.py"]
 
 ENTRYPOINT ["./entrypoint.sh"]
