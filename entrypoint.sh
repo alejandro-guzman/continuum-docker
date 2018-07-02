@@ -1,19 +1,14 @@
 #!/usr/bin/env bash
-
 set -e
 
-if [ -f ~/.profile ]; then
-    echo "Sourcing profile"
-    source ~/.profile
-fi
 
-if [ -z ${CONTINUUM_HOME+x} ]; then
-    echo "Setting CONTINUUM_HOME"
-    export CONTINUUM_HOME=/opt/continuum/current
+if [ -z ${CONTINUUM_HOME} ]; then
+    echo "CONTINUUM_HOME variable not set, exiting.."
+    exit 1
 fi
 
 # Setup up DB
-if [ -z ${SKIP_DB+x} ]; then
+if [ -z ${SKIP_DATABASE} ]; then
     echo "Setting Continuum DB"
     # Remove mongodb_database setting from config file, environment variables passed in will handle mongo settings
     sed -i '/mongodb_database/d' /etc/continuum/continuum.yaml
