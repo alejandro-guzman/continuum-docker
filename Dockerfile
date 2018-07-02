@@ -48,4 +48,4 @@ HEALTHCHECK --start-period=3s --interval=3s --retries=3  \
     CMD ["python", "./healthcheck.py"]
 
 ENTRYPOINT ["./entrypoint.sh"]
-CMD ["/bin/bash", "-c", "run.sh"]
+CMD ["/bin/bash", "-c", "./run.sh"]
