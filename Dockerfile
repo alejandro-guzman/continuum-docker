@@ -12,6 +12,9 @@ RUN apt-get update && apt-get install -y \
 ARG INSTALLER
 LABEL installer="$INSTALLER"
 
+ARG CONTINUUM_ENCRYPTION_KEY
+ENV CONTINUUM_ENCRYPTION_KEY="$CONTINUUM_ENCRYPTION_KEY"
+
 WORKDIR /tmp
 RUN set -x ; \
     curl --silent --output ./install.sh $INSTALLER ; \

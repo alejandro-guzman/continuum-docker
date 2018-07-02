@@ -4,7 +4,8 @@ services:
   continuum:
     build:
       args:
-        INSTALLER: "https://s3.amazonaws.com/versionone-builds/continuum/installer/continuum-18.1.2.5-S-65321-mongo-support-envvars-installer.sh"
+        CONTINUUM_ENCRYPTION_KEY: hellohello
+        INSTALLER: "https://s3.amazonaws.com/versionone-builds/continuum/installer/continuum-18.1.4.13-S-65499-key-injection-from-env-installer.sh"
       context: .
       dockerfile: Dockerfile
     depends_on:
@@ -14,7 +15,7 @@ services:
       CONTINUUM_MONGODB_PORT: 27017
       CONTINUUM_MONGODB_NAME: continuum
       CONTINUUM_MONGODB_USERNAME: continuum
-      CONTINUUM_MONGODB_PASSWORD: jQnkhqV13qC4W3iqiVMu8A==  # continuum
+      CONTINUUM_MONGODB_PASSWORD: YmqL6pu9AQm280E6jVDKKQ==  # continuum encrypted with hellohello
       CONTINUUM_MONGODB_AUTH: admin
     links:
       - mongodb
