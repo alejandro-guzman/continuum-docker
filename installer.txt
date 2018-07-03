@@ -1,1 +1,1 @@
-https://s3.amazonaws.com/versionone-builds/continuum/installer/continuum-18.1.2.5-S-65321-mongo-support-envvars-installer.sh
+https://s3.amazonaws.com/versionone-builds/continuum/installer/continuum-18.1.4.16-S-65499-key-injection-from-env-installer.sh
