@@ -15,11 +15,22 @@ fi
 # Setup up DB
 if [ -z ${SKIP_DATABASE} ]; then
     echo "Initializing and running upgrades on Continuum database.."
-    # Remove mongodb_database setting from config file, environment 
-    # variables passed in will handle Mongo settings
-    sed -i '/mongodb_database/d' /etc/continuum/continuum.yaml
 
-    DEFAULT_ADMIN_PASSWORD="KZV4tqnSlk78YGZ72USp6A=="  # "password" encrypted with key `defaultkey`.
+    config=/etc/continuum/continuum.yaml
+
+    # Remove mongodb_database setting from config file, environment
+    # variables passed in will handle Mongo settings
+    sed -i "/mongodb_database/d" $config
+
+    # Replace encryption key with key from environment.
+    sed -i "s/^\s\skey:.*$/  key: ${CONTINUUM_ENCRYPTION_KEY}/" $config
+
+    # On upgrades init_mongodb.py will run again, running into a
+    # Duplicate Key Error, failing to change the admin db password out from
+    # under you, which is the behavior we want.
+    DEFAULT_ADMIN_PASSWORD=$(${CONTINUUM_HOME}/common/install/ctm-encrypt \
+        "password" ${CONTINUUM_ENCRYPTION_KEY})
+
     ${CONTINUUM_HOME}/common/install/init_mongodb.py \
         --password $DEFAULT_ADMIN_PASSWORD || \
     ${CONTINUUM_HOME}/common/updatedb.py
