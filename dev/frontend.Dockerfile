@@ -9,9 +9,6 @@ WORKDIR $APP
 COPY ./dev/package.json .
 RUN npm install
 
-#COPY ./dev/webpack ./webpack
-#COPY ./dev/scripts ./scripts
-
 EXPOSE 3000
 
 CMD ["npm", "run", "server"]
