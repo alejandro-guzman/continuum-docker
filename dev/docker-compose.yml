@@ -1,10 +1,11 @@
-version: "3.3"
+version: "3.4"
 services:
 
   continuum-frontend:
     build:
       context: ..
-      dockerfile: ./dev/frontend.Dockerfile
+      dockerfile: ./dev/Dockerfile
+      target: frontend
     depends_on:
       - continuum-backend
     links:
@@ -19,7 +20,8 @@ services:
       args:
         INSTALLER: "https://s3.amazonaws.com/versionone-builds/continuum/installer/continuum-18.1.2.5-S-65321-mongo-support-envvars-installer.sh"
       context: ..
-      dockerfile: ./dev/backend.Dockerfile
+      dockerfile: ./dev/Dockerfile
+      target: backend
     depends_on:
       - mongodb
     environment:
