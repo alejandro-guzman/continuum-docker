@@ -1,5 +1,6 @@
 FROM ubuntu:16.04
-LABEL maintainer="a.guillermo.guzman@gmail.com"
+LABEL maintainer.name="Alejandro Guzman"
+LABEL maintainer.email="a.guillermo.guzman@gmail.com"
 
 RUN apt-get update && apt-get install -y \
     curl=7.47.0-1ubuntu2.8 \
