@@ -13,7 +13,10 @@ RUN apt-get update && apt-get install -y \
     libldap2-dev \
     libsasl2-dev \
     libssl-dev \
-    python-pip
+    python-pip \
+    vim \
+    nano \
+    man
 
 COPY ./dev/requirements.txt /
 RUN pip install --upgrade pip==9.0.0 && \
@@ -31,34 +34,21 @@ RUN set -x ; \
     ./install.sh -m -p -s && \
     rm -f /tmp/install.sh
 
-ENV CONTINUUM_HOME /opt/continuum/current
-ENV PATH $CONTINUUM_HOME/common/bin:$CONTINUUM_HOME/client/bin:$PATH
-#export ORACLE_HOME="$CONTINUUM_HOME/common/lib/instantclient_11_2"
-#export LD_LIBRARY_PATH="$ORACLE_HOME"
-
+ENV CONTINUUM_HOME=/opt/continuum/current
+ENV PATH=$CONTINUUM_HOME/common/bin:$CONTINUUM_HOME/client/bin:$PATH \
+    PATH=/opt/continuum/python/bin:$PATH
+ENV ORACLE_HOME=$CONTINUUM_HOME/common/lib/instantclient_11_2
+ENV LD_LIBRARY_PATH=$ORACLE_HOME
 
 WORKDIR $CONTINUUM_HOME
 
 RUN rm -rf $CONTINUUM_HOME/*
 
-#RUN groupadd --gid 999 ctmuser && \
-#    useradd --uid 999 --gid ctmuser --groups root --create-home ctmuser && \
-#    chown --recursive ctmuser:root \
-#    /opt/continuum \
-#    /etc/continuum \
-#    /var/continuum
-
-#COPY --chown=ctmuser:root ./entrypoint.sh /
-#COPY --chown=ctmuser:root ./healthcheck.py /
+COPY ./dev/entrypoint.sh /
 COPY ./dev/start.sh /
 
 # UI and messagehub ports
 EXPOSE 8080 8083
 
-#USER ctmuser
-
-#HEALTHCHECK --start-period=3s --interval=3s --retries=3  \
-#    CMD ["python", "./healthcheck.py"]
-
-#ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/bin/bash", "-c", "/start.sh"]
