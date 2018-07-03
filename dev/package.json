@@ -1,0 +1,215 @@
+{
+  "private": true,
+  "name": "continuum",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "gulp dev",
+    "build:svg": "gulp build:svg",
+    "server": "node --max_old_space_size=4096 webpack/webpack.devServer.js",
+    "build": "gulp build:prod --output-path",
+    "build:dev": "gulp build:dev",
+    "watch:dev": "gulp watch:dev",
+    "lint": "eslint -c .eslintrc --cache .",
+    "test": "better-npm-run test",
+    "cypress": "cd ./smoke && npm run cypress",
+    "cypress:ci": "cd ./smoke && npm run cypress:ci",
+    "help": "npm-scripts-help"
+  },
+  "betterScripts": {
+    "test": {
+      "command": "mocha --timeout 15000 --opts ./mocha.opts ./scripts/**/*.test.js ./canvas/**/*.test.js",
+      "env": {
+        "NODE_ENV": "test"
+      }
+    }
+  },
+  "scriptshelp": {
+    "help-message": [
+      "Help information for the Continuum npm tasks.",
+      "Unless otherwise noted, tasks are run with 'npm run'.",
+      "For example, the command to build svgs would 'npm run build:svg'."
+    ],
+    "dev": {
+      "Desciption": [
+        "DO NOT USE. Does not work on all machines.",
+        "Runs a production build and then spin up the dev server.",
+        "Equivalent to running 'npm run build && npm run server'."
+      ]
+    },
+    "build:svg": {
+      "Desciption": "Builds svgs."
+    },
+    "server": {
+      "Desciption": [
+        "Spins up an express server on port 3000 to serve up js and less files. Does not build svgs.",
+        "npm run server enables hot module reloading, so a page reload is not required after making changes to less or full react pages.",
+        "Must restart sevices with 'ctm-restart-services --dev'."
+      ],
+      "Additonal Details": [
+        "Currently can use up to 4 gigs of ram. You can change this in package.json by changing the --max_old_space_size=4096.",
+        "Note that lowering the memory allocation may cause the server to crash while it is running.",
+        "Please do not commit changes to the max_old_space_size."
+      ]
+    },
+    "build": {
+      "Desciption": "Builds javscript in the same way a production build would, including uglifying javascript.",
+      "Reducing Build Time": [
+        "The time for all build tasks and the memory use of the dev server can be reduced by limiting the number of entry points.",
+        "To do this, open webpack.entries.js and change getPages(pagesDir) on line 9 to an array of pages you wish to load.",
+        "For example, you might change line 9 to:",
+        "const pagesChunck = [\"login\", \"main\"].reduce(function(entries, page){ ",
+        "to only load the login and main landing pages. Any pages not included in this array will not be build and will error if you attempt to load them.",
+        "Please do not commit changes to the list of entry points."
+      ]
+    },
+    "build:dev": {
+      "Desciption": "Builds javascript, less, and svgs, but excludes certain production tasks such as uglifying javascript."
+    },
+    "watch:dev": {
+      "Desciption": "Builds javascript, less, and svgs, excluding production tasks. Continues to watch js and less for changes."
+    },
+    "lint": {
+      "Desciption": "Runs eslint tasks."
+    },
+    "test": {
+      "Desciption": "Runs javascript unit tests."
+    },
+    "cypress": {
+      "Desciption": "Runs cypress end-to-end tests in a gui."
+    },
+    "cypress:ci": {
+      "Desciption": "Runs cypress end-to-end tests in a headless browser."
+    },
+    "help": {
+      "Desciption": "Displays this help."
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/versionone/continuum.git"
+  },
+  "keywords": [
+    "versionone",
+    "continuum"
+  ],
+  "author": "VersionOne",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/versionone/continuum/issues"
+  },
+  "homepage": "https://github.com/versionone/continuum#readme",
+  "dependencies": {
+    "brace": "^0.11.1",
+    "classnames": "^2.2.5",
+    "clipboard": "^1.5.10",
+    "handlebars": "^4.0.5",
+    "highcharts": "^6.0.6",
+    "highcharts-more": "^0.1.2",
+    "highcharts-solid-gauge": "^0.1.2",
+    "jquery": "2.1.4",
+    "jquery-highlight": "^3.3.0",
+    "js-beautify": "^1.6.14",
+    "js-cookie": "^2.1.4",
+    "jsoneditor": "^5.5.11",
+    "key-code": "0.0.1",
+    "lodash": "^4.17.4",
+    "moment": "^2.14.1",
+    "moment-timezone": "^0.5.5",
+    "nestedSortable": "^1.3.4",
+    "prop-types": "^15.6.1",
+    "react": "^16.3.2",
+    "react-autosuggest": "^9.3.4",
+    "react-datetime": "^2.14.0",
+    "react-dom": "^16.3.2",
+    "react-modal": "^2.4.1",
+    "react-redux": "^5.0.7",
+    "react-select": "^1.2.1",
+    "react-sortable-hoc": "^0.6.8",
+    "react-sticky": "^6.0.2",
+    "react-style-proptype": "^3.2.1",
+    "react-textarea-autosize": "^6.1.0",
+    "react-tooltip": "^3.5.1",
+    "react-virtualized": "^9.18.5",
+    "redux": "^3.6.0",
+    "redux-thunk": "^2.2.0",
+    "reselect": "^2.5.4",
+    "short-number": "^1.0.6",
+    "xmlchecker": "^0.1.0"
+  },
+  "devDependencies": {
+    "babel": "^6.23.0",
+    "babel-cli": "^6.23.0",
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.2.1",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-rewire": "^1.1.0",
+    "babel-plugin-syntax-async-functions": "^6.13.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.23.0",
+    "babel-preset-stage-0": "^6.24.1",
+    "babel-preset-stage-1": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "babel-preset-stage-3": "^6.17.0",
+    "babel-runtime": "^6.26.0",
+    "better-npm-run": "^0.1.0",
+    "chai": "^4.1.2",
+    "css-loader": "^0.28.1",
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-react-16": "^1.1.1",
+    "eslint": "^4.17.0",
+    "express": "^4.15.2",
+    "extract-text-webpack-plugin": "^2.1.0",
+    "file-loader": "^1.1.6",
+    "gulp": "^3.9.1",
+    "gulp-bless": "^4.0.0",
+    "gulp-minify-css": "^1.2.4",
+    "gulp-rename": "^1.2.2",
+    "gulp-run": "^1.7.1",
+    "gulp-shell": "^0.6.3",
+    "gulp-svgstore": "^6.1.0",
+    "gulp-watch": "^5.0.0",
+    "happypack": "^3.0.3",
+    "jsdom": "^11.6.2",
+    "less": "^3.0.0",
+    "less-loader": "^4.0.3",
+    "mocha": "^5.0.1",
+    "npm-scripts-help": "^0.8.0",
+    "react-hot-loader": "^3.0.0",
+    "redux-freeze": "^0.1.5",
+    "require-dir": "^1.0.0",
+    "run-sequence": "^2.2.1",
+    "script-loader": "^0.7.0",
+    "sinon": "^4.3.0",
+    "style-loader": "^0.20.1",
+    "url-loader": "^0.6.2",
+    "wallaby-webpack": "^3.9.4",
+    "webpack": "^2.2.0",
+    "webpack-dev-middleware": "^1.10.1",
+    "webpack-dev-server": "^2.4.2",
+    "webpack-hot-middleware": "^2.18.0",
+    "yargs": "^11.0.0"
+  },
+  "optionalDependencies": {
+    "fsevents": "*"
+  },
+  "babel": {
+    "presets": [
+      "es2015",
+      "react",
+      "stage-3",
+      "stage-2",
+      "stage-1",
+      "stage-0"
+    ],
+    "env": {
+      "test": {
+        "plugins": [
+          "rewire"
+        ]
+      }
+    }
+  }
+}

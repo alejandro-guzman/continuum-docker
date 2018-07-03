@@ -13,6 +13,7 @@ pymongo==3.6.1
 PyMySQL==0.6.3
 pyOpenSSL==17.0.0
 python-dateutil==2.4.0
+python-jose==2.0.2
 python-ldap==2.4.19
 python-tds==1.7.0
 # pywinrm==0.2.2
