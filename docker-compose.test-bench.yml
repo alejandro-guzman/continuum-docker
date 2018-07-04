@@ -34,4 +34,4 @@ volumes:
   ctm-gitlab-data:
   ctm-gitlab-logs:
   
-  ctm-jenkins-data: # password: f0eb23381702404286825786040b7043 / jenkins
+  ctm-jenkins-data:

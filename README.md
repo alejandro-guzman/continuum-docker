@@ -52,6 +52,10 @@ docker-compose \
     -f docker-compose.test-bench.yml \
     up --build
 ```
+* Jenkins default username is `admin` & password is logged to the console, or you can bash into the container and find it at /var/jenkins_home/secrets/initialAdminPassword
+* Gitlab default username is `root` & password is created on initial login
+* Artifactory default username is `admin` & password is `password`
+
 **Enjoy!**
 
 ### Setting up a development environment
