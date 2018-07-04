@@ -2,7 +2,7 @@
 
 ## Purpose:
 `Dockerfile` is the build and environment definition of Continuum. You'll find Ctms' current dependencies and their versions listed including C libs and environment variables.
-This was originally made to provide a stable image for use with Ossum, but can also act as an easy to spin up staging instance. You can spin up an instance using `docker-compose.yml` - see section [Compose](#Using Docker Compose).
+This was originally made to provide a stable image for use with Ossum, but can also act as an easy to spin up staging instance. You can spin up an instance using `docker-compose.yml` - see section [Compose](#using-dockercompose)
 
 ## Improvements to be made:
 Build a smaller image using a different base image. ex `FROM python:2.7.15-alpine3.7`
@@ -52,7 +52,7 @@ docker-compose \
     -f docker-compose.test-bench.yml \
     up --build
 ```
-* Jenkins default username is `admin` & password is logged to the console, or you can bash into the container and find it at /var/jenkins_home/secrets/initialAdminPassword
+* Jenkins default username is `admin` & password is logged to the console, or you can bash into the container and find it at `/var/jenkins_home/secrets/initialAdminPassword`
 * Gitlab default username is `root` & password is created on initial login
 * Artifactory default username is `admin` & password is `password`
 
