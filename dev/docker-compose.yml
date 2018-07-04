@@ -41,8 +41,8 @@ services:
   mongodb:
     image: mongo:3.6-jessie
     volumes:
-      - mongodb-data:/data/db
+      - ctm-dev-mongodb-data:/data/db
 
 volumes:
   ctm-dev-logs:
-  mongodb-data:
+  ctm-dev-mongodb-data:
