@@ -39,6 +39,19 @@ docker-compose up --build
 ```
 Continuum should now be available at http://localhost:8080  
 Default login: _administrator/password_  
+
+Additionally! You can spin up services for a few integrations we support.
+You can use the `docker-compose.test-bench.yml` in addition with the `docker-compose.yml`.
+```bash
+docker-compose \
+    -f docker-compose.yml \
+    -f docker-compose.test-bench.yml \
+    pull && \
+docker-compose \
+    -f docker-compose.yml \
+    -f docker-compose.test-bench.yml \
+    up --build
+```
 **Enjoy!**
 
 ### Setting up a development environment

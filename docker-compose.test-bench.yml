@@ -1,0 +1,37 @@
+version: "3.3"
+services:
+  artifactory:
+    image: mattgruter/artifactory
+    ports:
+      - '8098:8080'
+    volumes:
+      - ctm-artifactory-backup:/artifactory/backup
+      - ctm-artifactory-data:/artifactory/data
+      - ctm-artifactory-logs:/artifactory/logs
+  gitlab:
+    image: gitlab/gitlab-ce
+    ports:
+      - '8800:80'
+      - '8801:443'
+      - '2288:22'
+    volumes:
+      - ctm-gitlab-data:/var/opt/gitlab
+      - ctm-gitlab-config:/etc/gitlab
+      - ctm-gitlab-logs:/var/log/gitlab
+  jenkins:
+    image: jenkins/jenkins:lts
+    ports:
+      - "8888:8080"
+#      - "50000:50000"
+    volumes:
+      - ctm-jenkins-data:/var/jenkins_home
+volumes:
+  ctm-artifactory-backup:
+  ctm-artifactory-data:
+  ctm-artifactory-logs:
+  
+  ctm-gitlab-config:
+  ctm-gitlab-data:
+  ctm-gitlab-logs:
+  
+  ctm-jenkins-data: # password: f0eb23381702404286825786040b7043 / jenkins
