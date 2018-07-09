@@ -70,7 +70,9 @@ export CONTINUUM_REPO=/path/to/continuum/repo
 ```
 Then start the containers.
 ```bash
-docker-compose pull && \
+docker-compose
+    --file dev/docker-compose.yml
+    pull && \
 docker-compose \
     --file dev/docker-compose.yml \
     up --build
