@@ -1,4 +1,4 @@
-FROM node:9.11.2-jessie as frontend
+FROM node:6.14.3-jessie as frontend
 
 LABEL maintainer.name="Alejandro Guzman"
 LABEL maintainer.email="a.guillermo.guzman@gmail.com"
@@ -7,7 +7,8 @@ ENV APP /app
 WORKDIR $APP
 
 COPY ./dev/package.json .
-RUN npm install
+RUN npm cache clean --force &&
+    npm install
 
 EXPOSE 3000
 
