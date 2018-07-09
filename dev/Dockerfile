@@ -7,7 +7,7 @@ ENV APP /app
 WORKDIR $APP
 
 COPY ./dev/package.json .
-RUN npm cache clean --force &&
+RUN npm cache clean --force && \
     npm install
 
 EXPOSE 3000
