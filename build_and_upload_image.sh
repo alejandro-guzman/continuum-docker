@@ -7,7 +7,7 @@ INSTALLER_LINK=$1
 docker image build \
     --tag continuum-prod \
     --build-arg INSTALLER=${INSTALLER_LINK} \
-    --file Dockerfile-continuum \
+    --file Dockerfile \
     .
 REPO=$2  # ex: "foo.dkr.ecr.us-east-1.amazonaws.com/continuum"
 TAG=$3  # defaults to latest
