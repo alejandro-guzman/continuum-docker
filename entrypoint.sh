@@ -22,8 +22,11 @@ if [ -z ${SKIP_DATABASE} ]; then
     # variables passed in will handle Mongo settings
     sed -i "/mongodb_database/d" $config
 
+    KEY=$(${CONTINUUM_HOME}/common/install/ctm-encrypt \
+        ${CONTINUUM_ENCRYPTION_KEY} "")
+
     # Replace encryption key with key from environment.
-    sed -i "s/^\s\skey:.*$/  key: ${CONTINUUM_ENCRYPTION_KEY}/" $config
+    sed -i "s/^\s\skey:.*$/  key: ${KEY}/" $config
 
     # On upgrades init_mongodb.py will run again, running into a
     # Duplicate Key Error, failing to change the admin db password out from
