@@ -22,6 +22,11 @@ if [ -z ${SKIP_DATABASE} ]; then
     # variables passed in will handle Mongo settings
     sed -i "/mongodb_database/d" $config
 
+    if [ -z ${CONTINUUM_ENCRYPTION_KEY} ]; then
+        echo "$(basename $0) requires a CONTINUUM_ENCRYPTION_KEY, exiting.."
+        exit 1
+    fi
+
     KEY=$(${CONTINUUM_HOME}/common/install/ctm-encrypt \
         ${CONTINUUM_ENCRYPTION_KEY} "")
 

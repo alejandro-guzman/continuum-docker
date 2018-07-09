@@ -4,7 +4,7 @@ services:
   continuum:
     build:
       args:
-        INSTALLER: "https://s3.amazonaws.com/versionone-builds/continuum/installer/continuum-18.1.4.16-S-65499-key-injection-from-env-installer.sh"
+        INSTALLER: "https://s3.amazonaws.com/versionone-builds/continuum/installer/continuum-18.1.4.224-development-installer.sh"
       context: .
       dockerfile: Dockerfile
     depends_on:
