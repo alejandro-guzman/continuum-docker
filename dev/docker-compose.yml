@@ -13,7 +13,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - $CONTINUUM_REPO:/app
+      - $CONTINUUM_REPO:/app/src
 
   continuum-backend:
     build:

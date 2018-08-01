@@ -108,6 +108,7 @@
     "highcharts": "^6.0.6",
     "highcharts-more": "^0.1.2",
     "highcharts-solid-gauge": "^0.1.2",
+    "idempotent-babel-polyfill": "^6.26.0",
     "jquery": "2.1.4",
     "jquery-highlight": "^3.3.0",
     "js-beautify": "^1.6.14",
