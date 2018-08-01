@@ -7,11 +7,12 @@ ENV APP /app
 WORKDIR $APP
 
 COPY ./dev/package.json .
-RUN npm cache clean --force && \
-    npm install
+RUN npm install
+ENV PATH /deps/node_modules/.bin:$PATH
 
 EXPOSE 3000
 
+WORKDIR $APP/src
 CMD ["npm", "run", "server"]
 
 
