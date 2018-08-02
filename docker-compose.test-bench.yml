@@ -1,5 +1,6 @@
 version: "3.3"
 services:
+
   artifactory:
     image: mattgruter/artifactory
     ports:
@@ -8,6 +9,16 @@ services:
       - ctm-artifactory-backup:/artifactory/backup
       - ctm-artifactory-data:/artifactory/data
       - ctm-artifactory-logs:/artifactory/logs
+
+  # To generate a license go to the self service page, link found `here`
+  # https://confluence.atlassian.com/bamboo/running-the-setup-wizard-289276851.html
+  # https://my.atlassian.com/license/evaluation
+  # https://github.com/cptactionhank/docker-atlassian-bamboo
+  bamboo:
+    image: cptactionhank/atlassian-bamboo:latest
+    ports:
+      - "8085:8085"
+
   gitlab:
     image: gitlab/gitlab-ce
     ports:
@@ -18,6 +29,7 @@ services:
       - ctm-gitlab-data:/var/opt/gitlab
       - ctm-gitlab-config:/etc/gitlab
       - ctm-gitlab-logs:/var/log/gitlab
+
   jenkins:
     image: jenkins/jenkins:lts
     ports:
@@ -25,6 +37,17 @@ services:
 #      - "50000:50000"
     volumes:
       - ctm-jenkins-data:/var/jenkins_home
+
+  # https://hub.docker.com/r/jetbrains/teamcity-server/
+  # https://www.jetbrains.com/teamcity/buy/license.html
+  # https://confluence.jetbrains.com/display/TCD10/Licensing+Policy
+  teamcity:
+    image: jetbrains/teamcity-server
+    ports:
+      - "8111:8111"
+    volumes:
+      - ctm-teamcity-data:/data/teamcity_server/datadir
+      - ctm-teamcity-logs:/opt/teamcity/logs
 volumes:
   ctm-artifactory-backup:
   ctm-artifactory-data:
@@ -35,3 +58,6 @@ volumes:
   ctm-gitlab-logs:
   
   ctm-jenkins-data:
+
+  ctm-teamcity-data:
+  ctm-teamcity-logs:
