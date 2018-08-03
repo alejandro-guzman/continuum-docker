@@ -3,6 +3,8 @@ set -e
 
 
 echo "Script running in ${PWD}"
+echo "Contents:"
+ls -la
 
 USERNAME="continuumserviceuser"
 ORGANIZATION="cycletime"
