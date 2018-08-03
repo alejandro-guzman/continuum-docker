@@ -29,6 +29,7 @@ ENV PATH="$CONTINUUM_HOME/common/bin:$CONTINUUM_HOME/client/bin:$PATH" \
     ORACLE_HOME="$CONTINUUM_HOME/common/lib/instantclient_11_2"
 ENV LD_LIBRARY_PATH="$ORACLE_HOME" \
     SKIP_DATABASE="" \
+    RUN_AS_MONOLITH="true" \
     CONTINUUM_ENCRYPTION_KEY="defaultkey" \
     CONTINUUM_MONGODB_SERVER="localhost" \
     CONTINUUM_MONGODB_PORT=27017 \
@@ -40,32 +41,28 @@ ENV LD_LIBRARY_PATH="$ORACLE_HOME" \
 
 WORKDIR $CONTINUUM_HOME
 
-RUN groupadd --gid 999 ctmuser && \
-    useradd --uid 999 --gid ctmuser --groups root --create-home ctmuser && \
-    mkdir --parent /data/db && \
-    chown --recursive ctmuser:root \
-    /opt/continuum \
-    /etc/continuum \
-    /var/continuum \
-    /data/db
+#RUN groupadd --gid 999 ctmuser && \
+#    useradd --uid 999 --gid ctmuser --groups root --create-home ctmuser && \
+#    mkdir --parent /data/db && \
+#    chown --recursive ctmuser:root \
+#    /opt/continuum \
+#    /etc/continuum \
+#    /var/continuum \
+#    /data/db
 
-COPY --chown=ctmuser:root ./monolith/entrypoint.sh $CONTINUUM_HOME
-COPY --chown=ctmuser:root ./healthcheck.py $CONTINUUM_HOME
-COPY --chown=ctmuser:root ./run.sh $CONTINUUM_HOME
+COPY ./entrypoint.sh $CONTINUUM_HOME
+COPY ./healthcheck.py $CONTINUUM_HOME
+COPY ./run.sh $CONTINUUM_HOME
 
 # UI and messagehub ports
 EXPOSE 8080 8083
 
-USER ctmuser
+VOLUME /var/continuum/logs /data/db
+
+#USER ctmuser
 
 HEALTHCHECK --start-period=3s --interval=3s --retries=3  \
     CMD ["python", "./healthcheck.py"]
 
 ENTRYPOINT ["./entrypoint.sh"]
 CMD ["/bin/bash", "-c", "./run.sh"]
-
-# Build image
-# docker image build --tag monolith-ctm --build-arg INSTALLER=$INSTALLER --file monolith/Dockerfile .
-
-# Run container
-# docker container run --rm --publish "8080:8080" --publish "8083:8083" monolith-ctm
