@@ -2,80 +2,109 @@
 set -e
 
 
-if [ -z ${CONTINUUM_HOME} ]; then
-    echo "CONTINUUM_HOME variable not set, exiting.."
-    exit 1
+#
+# If CONTINUUM_HOME or command location cannot be determined,
+# exit immediately, something is wrong with the image.
+#
+#
+[ -z "${CONTINUUM_HOME}" ] && (echo "[ERROR] CONTINUUM_HOME variable not set" && exit 1)
+[ -z "$(which ctm-start-services)" ] && (echo "[ERROR] Cannot find Continuum commands" && exit 1)
+
+#
+# Standard configuration file with every Continuum install.
+# Contains entries we'd want to modify/remove or add to in different cases depending on the version of installer.
+#
+#
+CONFIG_FILE="/etc/continuum/continuum.yaml"
+
+#
+# Include Ossum related keys/values in configuration for authentication.
+#
+#
+if [ -f "${CONFIG_FILE}" ]; then
+    if [[ -n "${OSSUM_KEYSET_URL}" && -n "${OSSUM_JWK_ISS}" && -n "${OSSUM_JWK_VALID_AUD}" ]]; then
+        echo "[INFO] Preparing Ossum values"
+        space=" "; two_spaces="  "
+        echo "${two_spaces}OSSUM_JWK_URL:${space}${OSSUM_KEYSET_URL}" >> ${CONFIG_FILE}
+        echo "${two_spaces}OSSUM_JWK_ISS:${space}${OSSUM_KEYSET_URL}" >> ${CONFIG_FILE}
+        echo "${two_spaces}OSSUM_JWK_VALID_AUD:${space}${OSSUM_KEYSET_URL}" >> ${CONFIG_FILE}
+    fi
 fi
 
-if [ -z $(which ctm-start-services) ]; then
-    echo "Cannot find ctm-start-service command, exiting.."
-    exit 1
-fi
+#
+# Attempt to setup database
+#
+#
+if [ -z "${SKIP_DATABASE}" ]; then
+    echo "[INFO] Preparing database configuration"
 
-CONFIG=/etc/continuum/continuum.yaml
-
-# URL to JWK public key, Issuer, and Audience for Ossum app
-# Set default values so inserting them into CONFIG does not
-# cause parsing errors when read. Default values allows us
-# to run this container outside the context of Ossum.
-[ -z ${OSSUM_KEYSET_URL} ] && OSSUM_KEYSET_URL="0"
-[ -z ${OSSUM_JWK_ISS} ] && OSSUM_JWK_ISS="0"
-[ -z ${OSSUM_JWK_VALID_AUD} ] && OSSUM_JWK_VALID_AUD="0"
-
-if [ -f ${CONFIG} ]; then
-    echo "  OSSUM_JWK_URL: ${OSSUM_KEYSET_URL}" >> ${CONFIG}
-    echo "  OSSUM_JWK_ISS: ${OSSUM_KEYSET_URL}" >> ${CONFIG}
-    echo "  OSSUM_JWK_VALID_AUD: ${OSSUM_KEYSET_URL}" >> ${CONFIG}
-fi
-
-# Setup up DB
-if [ -z ${SKIP_DATABASE} ]; then
-    echo "Initializing and running upgrades on Continuum database.."
-
-    config=/etc/continuum/continuum.yaml
-
+    #
     # Remove mongodb_database setting from config file, environment
     # variables passed in will handle Mongo settings
-    sed -i "/mongodb_database/d" ${CONFIG}
+    #
+    #
+    sed -i "/mongodb_database/d" ${CONFIG_FILE}
 
-    if [ -z ${CONTINUUM_ENCRYPTION_KEY} ]; then
-        echo "$(basename $0) requires a CONTINUUM_ENCRYPTION_KEY, exiting.."
-        exit 1
-    fi
+    #
+    # If we did not pass an encryption key we exit.
+    #
+    #
+    [ -z "${CONTINUUM_ENCRYPTION_KEY}" ] && (echo "[ERROR] $(basename $0) requires a CONTINUUM_ENCRYPTION_KEY" && exit 1)
 
     encrypt=${CONTINUUM_HOME}/common/install/ctm-encrypt
 
+    #
     # Prevents failure when running against a different version
-    # of the encrypt script
-    original_script=$(grep "#!/opt/continuum/python/bin/python2.7 -OO" ${encrypt})
+    # of the encrypt script. The original script uses double optimization
+    # when running python script.
+    #
+    #
+    using_original_script=$(grep "#!/opt/continuum/python/bin/python2.7 -OO" ${encrypt})
 
-    if [ -z ${original_script} ];then
-        # Use older script if grep didn't match
-        # New script uses 1 level of optimization
-        ENCRYPTED_KEY=$(${encrypt} ${CONTINUUM_ENCRYPTION_KEY} --key "")
+    if [ -n "${using_original_script}" ];then
+        # Original script relies on exactly 2 arguments
+        ENCRYPTED_ENCRYPTION_KEY=$(${encrypt} "${CONTINUUM_ENCRYPTION_KEY}" "")
     else
-        ENCRYPTED_KEY=$(${encrypt} ${CONTINUUM_ENCRYPTION_KEY} "")
+        # New script uses a named optional parameter for `key`
+        ENCRYPTED_ENCRYPTION_KEY=$(${encrypt} "${CONTINUUM_ENCRYPTION_KEY}" --key "")
     fi
-    # Replace encryption key with key from environment.
-    sed -i "s/^\s\skey:.*$/  key: ${ENCRYPTED_KEY}/" ${CONFIG}
 
+    #
+    # Replace encryption key with key from environment.
+    #
+    #
+    [ -f "${CONFIG_FILE}" ] && sed -i "s/^\s\skey:.*$/  key: ${ENCRYPTED_ENCRYPTION_KEY}/" ${CONFIG_FILE}
+
+    #
+    # Encrypt administrator password.
+    #
+    #
+    if [ -n "${using_original_script}" ];then
+        DEFAULT_ADMIN_PASSWORD=$(${encrypt} "password" "${CONTINUUM_ENCRYPTION_KEY}")
+    else
+        DEFAULT_ADMIN_PASSWORD=$(${encrypt} "password" --key "${CONTINUUM_ENCRYPTION_KEY}")
+    fi
+
+    run_mongo_command="mongod --bind_ip localhost --port 27017 --dbpath /data/db"
+    [ -n "${RUN_AS_MONOLITH}" ] && (echo "[INFO] Starting MongoDB" && $(${run_mongo_command}) &)
+
+    #
     # On upgrades init_mongodb.py will run again, running into a
     # DuplicateKeyError, failing to change the admin db password out from
     # under you, which is the behavior we want.
-     if [ -z ${original_script} ];then
-        DEFAULT_ADMIN_PASSWORD=$(${encrypt} "password" --key ${CONTINUUM_ENCRYPTION_KEY})
-    else
-        DEFAULT_ADMIN_PASSWORD=$(${encrypt} "password" ${CONTINUUM_ENCRYPTION_KEY})
-    fi
-
-    ${CONTINUUM_HOME}/common/install/init_mongodb.py --password ${DEFAULT_ADMIN_PASSWORD} || ${CONTINUUM_HOME}/common/updatedb.py
+    # TODO: We want to add something more robust than relying on the exception
+    #
+    #
+    echo "[INFO] Initializing and running database upgrades"
+    ${CONTINUUM_HOME}/common/install/init_mongodb.py --password "${DEFAULT_ADMIN_PASSWORD}" &> /dev/null \
+    || ${CONTINUUM_HOME}/common/updatedb.py &> /dev/null
 fi
 
+#
 # File corruption always causing login issues.
+#
+#
 shelf_file=/var/continuum/ui/cskuisession.shelf
-if [ -f ${shelf_file} ]; then
-    rm -f ${shelf_file}
-fi
+[ -f ${shelf_file} ] && rm -f ${shelf_file}
 
-# https://stackoverflow.com/questions/39082768/what-does-set-e-and-exec-do-for-docker-entrypoint-scripts?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
 exec "$@"
