@@ -12,9 +12,9 @@ IMAGE="continuum"
 
 
 echo "[INFO] Logging into Docker using username ${USERNAME}"
-cat ${HOME}/.docker/continuumserviceuser-pw | docker login -u ${USERNAME} --password-stdin
+cat ${HOME}/.docker/continuumserviceuser-pw | docker login -u ${USERNAME} --password-stdin || true
 
-
+echo "Getting version from docker-compose.yml"
 # Tag will be the version.revision-story_number
 version=$(grep -oP "(\d{2}\.\d\.\d*\.\d*-\w-\d{5})" ./docker-compose.yml)
 [ -z ${version} ] && (echo "[ERROR] Could not determine image version" && exit 1)
