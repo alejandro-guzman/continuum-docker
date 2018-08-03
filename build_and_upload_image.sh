@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
-set -ex
+set -e
 
+
+echo "Script running in ${PWD}"
 
 USERNAME="continuumserviceuser"
 ORGANIZATION="cycletime"
