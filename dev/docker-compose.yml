@@ -13,7 +13,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - $CONTINUUM_REPO:/app/src
+      - $CONTINUUM_REPO:/app
 
   continuum-backend:
     build:
@@ -32,6 +32,9 @@ services:
       CONTINUUM_MONGODB_NAME: continuum
     links:
       - mongodb
+    networks:
+      - frontend
+      - backend
     ports:
       - "9000:8080"
       - "8083:8083"
@@ -41,8 +44,14 @@ services:
 
   mongodb:
     image: mongo:3.6-jessie
+    networks:
+      - backend
     volumes:
       - ctm-dev-mongodb-data:/data/db
+
+networks:
+  frontend:
+  backend:
 
 volumes:
   ctm-dev-logs:

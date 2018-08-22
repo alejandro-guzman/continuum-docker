@@ -1,19 +1,15 @@
 FROM node:6.14.3-jessie as frontend
 
-LABEL maintainer.name="Alejandro Guzman"
-LABEL maintainer.email="a.guillermo.guzman@gmail.com"
+LABEL maintainer.name="Alejandro Guzman" \
+      maintainer.email="a.guillermo.guzman@gmail.com"
 
 ENV APP /app
 WORKDIR $APP
 
-COPY ./dev/package.json .
-RUN npm install
-ENV PATH /deps/node_modules/.bin:$PATH
-
 EXPOSE 3000
 
-WORKDIR $APP/src
-CMD ["npm", "run", "server"]
+COPY ./dev/start_frontend.sh /
+CMD ["/bin/bash", "-c", "/start_frontend.sh"]
 
 
 FROM ubuntu:16.04 as backend
@@ -43,6 +39,9 @@ RUN apt-get update && apt-get install -y \
     nano \
     vim
 
+# TODO: for now having the reqs here is okay since they do not change often
+# but eventually we'd want to leverage mounting the local thirdparty repo
+# if it's available or downloading the raw reqs from thirdparty repo.
 COPY ./dev/requirements.txt /
 RUN pip install --upgrade pip==9.0.0 && \
     pip install --no-cache-dir -r /requirements.txt
@@ -62,8 +61,7 @@ RUN set -x ; \
     rm -f /tmp/install.sh
 
 ENV CONTINUUM_HOME=/opt/continuum/current
-ENV PATH=$CONTINUUM_HOME/common/bin:$CONTINUUM_HOME/client/bin:$PATH
-ENV PATH=/opt/continuum/python/bin:$PATH
+ENV PATH=$CONTINUUM_HOME/common/bin:$CONTINUUM_HOME/client/bin:/opt/continuum/python/bin:$PATH
 ENV ORACLE_HOME=$CONTINUUM_HOME/common/lib/instantclient_11_2
 ENV LD_LIBRARY_PATH=$ORACLE_HOME
 
@@ -72,10 +70,10 @@ WORKDIR $CONTINUUM_HOME
 RUN rm -rf $CONTINUUM_HOME/*
 
 COPY ./entrypoint.sh /
-COPY ./dev/start.sh /
+COPY ./dev/start_backend.sh /
 
 # UI and messagehub ports
 EXPOSE 8080 8083
 
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["/bin/bash", "-c", "/start.sh"]
+CMD ["/bin/bash", "-c", "/start_backend.sh"]
