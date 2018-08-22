@@ -16,6 +16,7 @@ cat ${HOME}/.docker/continuumserviceuser-pw | docker login -u ${USERNAME} --pass
 
 echo "Getting version from docker-compose.yml"
 # Tag will be the version.revision-story_number
+
 version=$(grep -oP '(\d{2}\.\d\.\d*\.\d*)' ./docker-compose.yml)
 echo $version
 [ -z ${version} ] && (echo "[ERROR] Could not determine image version" && exit 1)
