@@ -73,7 +73,7 @@ if [ -z "${SKIP_DATABASE}" ]; then
     # Replace encryption key with key from environment.
     #
     #
-    [ -f "${CONFIG_FILE}" ] && sed -i "s/^\s\skey:.*$/  key: ${ENCRYPTED_ENCRYPTION_KEY}/" ${CONFIG_FILE}
+    [ -f "${CONFIG_FILE}" ] && sed -i "s|^\s\skey:.*$|  key: ${ENCRYPTED_ENCRYPTION_KEY}|" ${CONFIG_FILE}
 
     #
     # Encrypt administrator password.
