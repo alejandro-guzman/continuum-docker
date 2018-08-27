@@ -59,10 +59,11 @@ if [ -z "${SKIP_DATABASE}" ]; then
     #
     # Prevents failure when running against a different version
     # of the encrypt script. The original script uses double optimization
-    # when running python script.
+    # when running python script. Note: Not including "|| true" will result in
+    # the script exiting prematurely.
     #
     #
-    using_original_script=$(grep "#!/opt/continuum/python/bin/python2.7 -OO" ${encrypt})
+    using_original_script=$(grep "#!/opt/continuum/python/bin/python2.7 -OO" ${encrypt} || true)
 
     if [ -n "${using_original_script}" ];then
         # Original script relies on exactly 2 arguments
@@ -103,9 +104,13 @@ if [ -z "${SKIP_DATABASE}" ]; then
     echo "[INFO] Initializing and running database upgrades"
     if [ -n "${using_original_initdb}" ]; then
         ${init_db} --password "${DEFAULT_ADMIN_PASSWORD}" &> /dev/null \
-        || ${CONTINUUM_HOME}/common/updatedb.py &> /dev/null
+        || ${CONTINUUM_HOME}/common/updatedb.py &> /dev/null \
+        || true
+
     else
-        ${init_db} &> /dev/null || ${CONTINUUM_HOME}/common/updatedb.py &> /dev/null
+        ${init_db} &> /dev/null \
+        || ${CONTINUUM_HOME}/common/updatedb.py &> /dev/null \
+        || true
     fi
 fi
 
