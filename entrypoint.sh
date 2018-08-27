@@ -79,16 +79,6 @@ if [ -z "${SKIP_DATABASE}" ]; then
     #
     [ -f "${CONFIG_FILE}" ] && sed -i "s|^\s\skey:.*$|  key: ${ENCRYPTED_ENCRYPTION_KEY}|" ${CONFIG_FILE}
 
-    #
-    # Encrypt administrator password.
-    #
-    #
-    if [ -n "${using_original_script}" ];then
-        DEFAULT_ADMIN_PASSWORD=$(${encrypt} "password" "${CONTINUUM_ENCRYPTION_KEY}")
-    else
-        DEFAULT_ADMIN_PASSWORD=$(${encrypt} "password" --key "${CONTINUUM_ENCRYPTION_KEY}")
-    fi
-
     run_mongo_command="mongod --bind_ip localhost --port 27017 --dbpath /data/db"
     [ -n "${RUN_AS_MONOLITH}" ] && (echo "[INFO] Starting MongoDB" && $(${run_mongo_command}) &)
 
@@ -100,9 +90,20 @@ if [ -z "${SKIP_DATABASE}" ]; then
     #
     #
     init_db=${CONTINUUM_HOME}/common/install/init_mongodb.py
-    using_original_initdb=$(grep "--password" ${init_db})
+    using_original_initdb=$(grep ".*.add_argument.*\-\-password" ${init_db} || true)
     echo "[INFO] Initializing and running database upgrades"
     if [ -n "${using_original_initdb}" ]; then
+
+        #
+        # Encrypt administrator password.
+        #
+        #
+        if [ -n "${using_original_script}" ];then
+            DEFAULT_ADMIN_PASSWORD=$(${encrypt} "password" "${CONTINUUM_ENCRYPTION_KEY}")
+        else
+            DEFAULT_ADMIN_PASSWORD=$(${encrypt} "password" --key "${CONTINUUM_ENCRYPTION_KEY}")
+        fi
+
         ${init_db} --password "${DEFAULT_ADMIN_PASSWORD}" &> /dev/null \
         || ${CONTINUUM_HOME}/common/updatedb.py &> /dev/null \
         || true
