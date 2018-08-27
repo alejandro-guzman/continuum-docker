@@ -98,9 +98,15 @@ if [ -z "${SKIP_DATABASE}" ]; then
     # TODO: We want to add something more robust than relying on the exception
     #
     #
+    init_db=${CONTINUUM_HOME}/common/install/init_mongodb.py
+    using_original_initdb=$(grep "--password" ${init_db})
     echo "[INFO] Initializing and running database upgrades"
-    ${CONTINUUM_HOME}/common/install/init_mongodb.py --password "${DEFAULT_ADMIN_PASSWORD}" &> /dev/null \
-    || ${CONTINUUM_HOME}/common/updatedb.py &> /dev/null
+    if [ -n "${using_original_initdb}" ]; then
+        ${init_db} --password "${DEFAULT_ADMIN_PASSWORD}" &> /dev/null \
+        || ${CONTINUUM_HOME}/common/updatedb.py &> /dev/null
+    else
+        ${init_db} &> /dev/null || ${CONTINUUM_HOME}/common/updatedb.py &> /dev/null
+    fi
 fi
 
 #
