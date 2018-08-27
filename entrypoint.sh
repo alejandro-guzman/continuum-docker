@@ -19,15 +19,18 @@ CONFIG_FILE="/etc/continuum/continuum.yaml"
 
 #
 # Include Ossum related keys/values in configuration for authentication.
-#
+# TODO: Ossum jwk environment variables are stored in config file, do we
+# really need them there if ossum is only going to use them? maybe just
+# retrieve vars from environment in jwt_auth module instead of placing them
+# in the config file... Also let's name the vars more generic.
 #
 if [ -f "${CONFIG_FILE}" ]; then
     if [[ -n "${OSSUM_KEYSET_URL}" && -n "${OSSUM_JWK_ISS}" && -n "${OSSUM_JWK_VALID_AUD}" ]]; then
         echo "[INFO] Preparing Ossum values"
         space=" "; two_spaces="  "
         echo "${two_spaces}OSSUM_JWK_URL:${space}${OSSUM_KEYSET_URL}" >> ${CONFIG_FILE}
-        echo "${two_spaces}OSSUM_JWK_ISS:${space}${OSSUM_KEYSET_URL}" >> ${CONFIG_FILE}
-        echo "${two_spaces}OSSUM_JWK_VALID_AUD:${space}${OSSUM_KEYSET_URL}" >> ${CONFIG_FILE}
+        echo "${two_spaces}OSSUM_JWK_ISS:${space}${OSSUM_JWK_ISS}" >> ${CONFIG_FILE}
+        echo "${two_spaces}OSSUM_JWK_VALID_AUD:${space}${OSSUM_JWK_VALID_AUD}" >> ${CONFIG_FILE}
     fi
 fi
 
@@ -56,10 +59,11 @@ if [ -z "${SKIP_DATABASE}" ]; then
     #
     # Prevents failure when running against a different version
     # of the encrypt script. The original script uses double optimization
-    # when running python script.
+    # when running python script. Note: Not including "|| true" will result in
+    # the script exiting prematurely.
     #
     #
-    using_original_script=$(grep "#!/opt/continuum/python/bin/python2.7 -OO" ${encrypt})
+    using_original_script=$(grep "#!/opt/continuum/python/bin/python2.7 -OO" ${encrypt} || true)
 
     if [ -n "${using_original_script}" ];then
         # Original script relies on exactly 2 arguments
@@ -75,16 +79,6 @@ if [ -z "${SKIP_DATABASE}" ]; then
     #
     [ -f "${CONFIG_FILE}" ] && sed -i "s|^\s\skey:.*$|  key: ${ENCRYPTED_ENCRYPTION_KEY}|" ${CONFIG_FILE}
 
-    #
-    # Encrypt administrator password.
-    #
-    #
-    if [ -n "${using_original_script}" ];then
-        DEFAULT_ADMIN_PASSWORD=$(${encrypt} "password" "${CONTINUUM_ENCRYPTION_KEY}")
-    else
-        DEFAULT_ADMIN_PASSWORD=$(${encrypt} "password" --key "${CONTINUUM_ENCRYPTION_KEY}")
-    fi
-
     run_mongo_command="mongod --bind_ip localhost --port 27017 --dbpath /data/db"
     [ -n "${RUN_AS_MONOLITH}" ] && (echo "[INFO] Starting MongoDB" && $(${run_mongo_command}) &)
 
@@ -95,9 +89,30 @@ if [ -z "${SKIP_DATABASE}" ]; then
     # TODO: We want to add something more robust than relying on the exception
     #
     #
+    init_db=${CONTINUUM_HOME}/common/install/init_mongodb.py
+    using_original_initdb=$(grep ".*.add_argument.*\-\-password" ${init_db} || true)
     echo "[INFO] Initializing and running database upgrades"
-    ${CONTINUUM_HOME}/common/install/init_mongodb.py --password "${DEFAULT_ADMIN_PASSWORD}" &> /dev/null \
-    || ${CONTINUUM_HOME}/common/updatedb.py &> /dev/null
+    if [ -n "${using_original_initdb}" ]; then
+
+        #
+        # Encrypt administrator password.
+        #
+        #
+        if [ -n "${using_original_script}" ];then
+            DEFAULT_ADMIN_PASSWORD=$(${encrypt} "password" "${CONTINUUM_ENCRYPTION_KEY}")
+        else
+            DEFAULT_ADMIN_PASSWORD=$(${encrypt} "password" --key "${CONTINUUM_ENCRYPTION_KEY}")
+        fi
+
+        ${init_db} --password "${DEFAULT_ADMIN_PASSWORD}" &> /dev/null \
+        || ${CONTINUUM_HOME}/common/updatedb.py &> /dev/null \
+        || true
+
+    else
+        ${init_db} &> /dev/null \
+        || ${CONTINUUM_HOME}/common/updatedb.py &> /dev/null \
+        || true
+    fi
 fi
 
 #
