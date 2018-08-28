@@ -4,7 +4,7 @@ services:
   continuum:
     build:
       args:
-        INSTALLER: "https://s3.amazonaws.com/versionone-builds/continuum/installer/continuum-18.2.0.261-development-installer.sh"
+        INSTALLER: "https://s3.amazonaws.com/versionone-builds/continuum/installer/continuum-18.2.0.262-development-installer.sh"
       context: .
       dockerfile: Dockerfile
     depends_on:
