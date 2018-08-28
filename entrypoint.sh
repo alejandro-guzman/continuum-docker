@@ -25,13 +25,26 @@ CONFIG_FILE="/etc/continuum/continuum.yaml"
 # in the config file... Also let's name the vars more generic.
 #
 if [ -f "${CONFIG_FILE}" ]; then
+    space=" "; two_spaces="  "
+
     if [[ -n "${OSSUM_KEYSET_URL}" && -n "${OSSUM_JWK_ISS}" && -n "${OSSUM_JWK_VALID_AUD}" ]]; then
         echo "[INFO] Preparing Ossum values"
-        space=" "; two_spaces="  "
         echo "${two_spaces}OSSUM_JWK_URL:${space}${OSSUM_KEYSET_URL}" >> ${CONFIG_FILE}
         echo "${two_spaces}OSSUM_JWK_ISS:${space}${OSSUM_JWK_ISS}" >> ${CONFIG_FILE}
         echo "${two_spaces}OSSUM_JWK_VALID_AUD:${space}${OSSUM_JWK_VALID_AUD}" >> ${CONFIG_FILE}
     fi
+
+    #
+    # TODO: Add a flag to enable all or part of these configurations.
+    # We want most of these for Ossum but for other deployments we want them configurable.
+    #
+    #
+    echo "${two_spaces}ui_debug:${space}${UI_LOG_LEVEL}" >> ${CONFIG_FILE}
+    echo "${two_spaces}rest_api_enable_basicauth:${space}disabled" >> ${CONFIG_FILE}
+    echo "${two_spaces}ui_enable_tokenauth:${space}disabled" >> ${CONFIG_FILE}
+    echo "${two_spaces}msghub_enabled:${space}disabled" >> ${CONFIG_FILE}
+    [ -z "${APPLICATION_URL}" ] && APPLICATION_URL="*"
+    echo "${two_spaces}rest_api_allowed_origins:${space}\"${APPLICATION_URL}\"" >> ${CONFIG_FILE}
 fi
 
 #
