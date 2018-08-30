@@ -38,20 +38,21 @@ ENV UI_LOG_LEVEL $UI_LOG_LEVEL
 
 WORKDIR $CONTINUUM_HOME
 
-RUN groupadd --gid 999 ctmuser && \
-    useradd --uid 999 --gid ctmuser --groups root --create-home ctmuser && \
-    chown --recursive ctmuser:root \
+RUN groupadd --gid 999 continuum && \
+    useradd --uid 999 --gid continuum --groups root,sudo --create-home continuum && \
+    echo "continuum:continuum" | chpasswd && \
+    chown --recursive continuum:root \
     /opt/continuum \
     /etc/continuum \
     /var/continuum
 
-COPY --chown=ctmuser:root ./entrypoint.sh $CONTINUUM_HOME
-COPY --chown=ctmuser:root ./healthcheck.py $CONTINUUM_HOME
-COPY --chown=ctmuser:root ./run.sh $CONTINUUM_HOME
+COPY --chown=continuum:root ./entrypoint.sh $CONTINUUM_HOME
+COPY --chown=continuum:root ./healthcheck.py $CONTINUUM_HOME
+COPY --chown=continuum:root ./run.sh $CONTINUUM_HOME
 
 VOLUME /var/continuum/log
 EXPOSE 8080 8083
-USER ctmuser
+USER continuum
 
 HEALTHCHECK --start-period=3s --interval=3s --retries=3  \
     CMD ["python", "./healthcheck.py"]
