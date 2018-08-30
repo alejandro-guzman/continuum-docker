@@ -75,5 +75,10 @@ COPY ./dev/start_backend.sh /
 # UI and messagehub ports
 EXPOSE 8080 8083
 
+ENV OSSUM_KEYSET_URL=https://api.test.ossum.cloud/oauth/discovery/keys \
+    OSSUM_JWK_ISS=urn:cycletime:iss:idp \
+    OSSUM_JWK_VALID_AUD=devops \
+    UI_LOG_LEVEL=10
+
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/bin/bash", "-c", "/start_backend.sh"]
