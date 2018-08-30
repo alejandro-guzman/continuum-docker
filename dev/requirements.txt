@@ -26,7 +26,6 @@ backports.ssl-match-hostname==3.5.0.1
 sonarqube-api==1.3.1
 requests-credssp==0.0.2
 python-jose==2.0.1
-pycrypto==2.6.1
 
 # we are using a forked version of pywinrm until
 # https://github.com/diyan/pywinrm/pull/156 gets merged into the master branch of the original project
