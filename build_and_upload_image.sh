@@ -17,7 +17,7 @@ cat ${HOME}/.docker/continuumserviceuser-pw | docker login -u ${USERNAME} --pass
 echo "Getting version from docker-compose.yml"
 # Tag will be the version.revision-story_number
 
-version=$(grep -oP '(\d{2}\.\d\.\d*\.\d*-[S|D]-\d{5})' ./docker-compose.yml)
+version=$(grep -oP '(\d{2}\.\d\.\d*\.\d*-[S|D]-\d{5})' ./docker-compose.yml) || true
 echo $version
 
 if [ -z ${version} ]; then
