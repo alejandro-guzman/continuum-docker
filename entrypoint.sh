@@ -24,16 +24,17 @@ CONFIG_FILE="/etc/continuum/continuum.yaml"
 # retrieve vars from environment in jwt_auth module instead of placing them
 # in the config file... Also let's name the vars more generic.
 #
+if [[ -z "${OSSUM_JWT_ISSUER}" \
+    || -z "${OSSUM_JWT_AUDIENCE}" \
+    || -z "${OSSUM_OAUTH_URL}" \
+    || -z "${OSSUM_OAUTH_CLIENT_ID}" \
+    || -z "${OSSUM_OAUTH_SECRET}" \
+    ]]; then
+        echo "[WARNING] Ossum environment not complete"
+fi
+
 if [ -f "${CONFIG_FILE}" ]; then
     space=" "; two_spaces="  "
-
-    if [[ -n "${OSSUM_KEYSET_URL}" && -n "${OSSUM_JWK_ISS}" && -n "${OSSUM_JWK_VALID_AUD}" ]]; then
-        echo "[INFO] Preparing Ossum values"
-        echo "${two_spaces}OSSUM_JWK_URL:${space}${OSSUM_KEYSET_URL}" >> ${CONFIG_FILE}
-        echo "${two_spaces}OSSUM_JWK_ISS:${space}${OSSUM_JWK_ISS}" >> ${CONFIG_FILE}
-        echo "${two_spaces}OSSUM_JWK_VALID_AUD:${space}${OSSUM_JWK_VALID_AUD}" >> ${CONFIG_FILE}
-    fi
-
     #
     # TODO: Add a flag to enable all or part of these configurations.
     # We want most of these for Ossum but for other deployments we want them configurable.
