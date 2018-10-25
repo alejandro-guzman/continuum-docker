@@ -19,10 +19,7 @@ CONFIG_FILE="/etc/continuum/continuum.yaml"
 
 #
 # Include Ossum related keys/values in configuration for authentication.
-# TODO: Ossum jwk environment variables are stored in config file, do we
-# really need them there if ossum is only going to use them? maybe just
-# retrieve vars from environment in jwt_auth module instead of placing them
-# in the config file... Also let's name the vars more generic.
+#
 #
 if [[ -z "${OSSUM_JWT_ISSUER}" \
     || -z "${OSSUM_JWT_AUDIENCE}" \
