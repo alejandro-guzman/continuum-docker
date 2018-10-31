@@ -37,6 +37,7 @@ if [ -f "${CONFIG_FILE}" ]; then
     # We want most of these for Ossum but for other deployments we want them configurable.
     #
     #
+    echo "${two_spaces}ui_port:${space}${UI_PORT}" >> ${CONFIG_FILE}
     echo "${two_spaces}ui_debug:${space}${UI_LOG_LEVEL}" >> ${CONFIG_FILE}
     echo "${two_spaces}rest_api_enable_basicauth:${space}disabled" >> ${CONFIG_FILE}
     echo "${two_spaces}ui_enable_tokenauth:${space}disabled" >> ${CONFIG_FILE}
