@@ -116,13 +116,13 @@ if [ -z "${SKIP_DATABASE}" ]; then
             DEFAULT_ADMIN_PASSWORD=$(${encrypt} "password" --key "${CONTINUUM_ENCRYPTION_KEY}")
         fi
 
-        ${init_db} --password "${DEFAULT_ADMIN_PASSWORD}" &> /dev/null \
-        || ${CONTINUUM_HOME}/common/updatedb.py &> /dev/null \
+        ${init_db} --password "${DEFAULT_ADMIN_PASSWORD}" \
+        || ${CONTINUUM_HOME}/common/updatedb.py \
         || true
 
     else
-        ${init_db} &> /dev/null \
-        || ${CONTINUUM_HOME}/common/updatedb.py &> /dev/null \
+        ${init_db} \
+        || ${CONTINUUM_HOME}/common/updatedb.py \
         || true
     fi
 fi
