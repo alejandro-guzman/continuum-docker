@@ -36,6 +36,10 @@ ENV LD_LIBRARY_PATH="$ORACLE_HOME" \
 ARG UI_LOG_LEVEL=10
 ENV UI_LOG_LEVEL $UI_LOG_LEVEL
 
+
+# Quick and dirty solution for overcomming the SSL options overriding the ssl=true in url params
+ENV CONTINUUM_MONGODB_SSL "true"
+
 WORKDIR $CONTINUUM_HOME
 
 RUN groupadd --gid 999 continuum && \
