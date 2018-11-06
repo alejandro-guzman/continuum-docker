@@ -111,16 +111,20 @@ if [ -z "${SKIP_DATABASE}" ]; then
         #
         #
         if [ -n "${using_original_script}" ];then
+            echo "[INFO] Using original encrypt script"
             DEFAULT_ADMIN_PASSWORD=$(${encrypt} "password" "${CONTINUUM_ENCRYPTION_KEY}")
         else
+            echo "[INFO] Using new encrypt script"
             DEFAULT_ADMIN_PASSWORD=$(${encrypt} "password" --key "${CONTINUUM_ENCRYPTION_KEY}")
         fi
 
+        echo "[INFO] Using original DB scripts"
         ${init_db} --password "${DEFAULT_ADMIN_PASSWORD}" \
         || ${CONTINUUM_HOME}/common/updatedb.py \
         || true
 
     else
+        echo "[INFO] Using new DB scripts"
         ${init_db} \
         || ${CONTINUUM_HOME}/common/updatedb.py \
         || true

@@ -25,6 +25,8 @@ if [ -z ${version} ]; then
     echo $version
     [ -z ${version} ] && (echo "[ERROR] Could not determine image version" && exit 1)
 fi
+build=$1
+version="${version}-${build}"
 
 link=$(grep -oP "(https.*installer\.sh)" ./docker-compose.yml)
 [ -z ${link} ] && (echo "[ERROR] Could not determine image installer link" && exit 1)
