@@ -1,0 +1,32 @@
+version: "3.7"
+services:
+
+  continuum:
+    build:
+      args:
+        INSTALLER_LINK: "https://s3.amazonaws.com/versionone-builds/continuum/installer/continuum-18.3.0.379-development-installer.sh"
+      context: ../
+      dockerfile: ./prod/Dockerfile
+    depends_on:
+      - mongodb
+    env_file:
+      - .env
+    links:
+      - mongodb
+    ports:
+      - "8080:8080"
+      - "8083:8083"
+    volumes:
+      - ctm-logs:/var/continuum
+
+  mongodb:
+    image: mongo:3.6-jessie
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: continuum
+      MONGO_INITDB_ROOT_PASSWORD: continuum
+    volumes:
+      - ctm-data:/data/db
+
+volumes:
+  ctm-logs:
+  ctm-data:

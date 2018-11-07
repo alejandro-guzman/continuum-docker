@@ -1,11 +1,6 @@
 .git
 .gitignore
 
-continuum-deploy.yaml.template
-docker-compose.yml
-docker-compose-dev.yml
-
-Dockerfile-dev
-
-installer.txt
+docker-compose*.yml
+Dockerfile*
 README.md

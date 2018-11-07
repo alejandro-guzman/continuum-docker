@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -ex
 
 
 #
@@ -7,8 +7,15 @@ set -e
 # exit immediately, something is wrong with the image.
 #
 #
-[ -z "${CONTINUUM_HOME}" ] && (echo "[ERROR] CONTINUUM_HOME variable not set" && exit 1)
-[ -z "$(which ctm-start-services)" ] && (echo "[ERROR] Cannot find Continuum commands" && exit 1)
+if [[ -z "${CONTINUUM_HOME}" ]]; then
+    echo "[ERROR] CONTINUUM_HOME variable not set"
+    exit 1
+fi
+
+if [[ -z "$(which ctm-start-services)" ]]; then
+    echo "[ERROR] Cannot find Continuum commands"
+    exit 1
+fi
 
 #
 # Standard configuration file with every Continuum install.
@@ -30,7 +37,7 @@ if [[ -z "${OSSUM_JWT_ISSUER}" \
         echo "[WARNING] Ossum environment not complete"
 fi
 
-if [ -f "${CONFIG_FILE}" ]; then
+if [[ -f "${CONFIG_FILE}" ]]; then
     space=" "; two_spaces="  "
     #
     # TODO: Add a flag to enable all or part of these configurations.
@@ -42,7 +49,10 @@ if [ -f "${CONFIG_FILE}" ]; then
     echo "${two_spaces}rest_api_enable_basicauth:${space}disabled" >> ${CONFIG_FILE}
     echo "${two_spaces}ui_enable_tokenauth:${space}disabled" >> ${CONFIG_FILE}
     echo "${two_spaces}msghub_enabled:${space}disabled" >> ${CONFIG_FILE}
-    [ -z "${APPLICATION_URL}" ] && APPLICATION_URL="*"
+
+    if [[ -z "${APPLICATION_URL}" ]]; then
+        APPLICATION_URL="*"
+    fi
     echo "${two_spaces}rest_api_allowed_origins:${space}\"${APPLICATION_URL}\"" >> ${CONFIG_FILE}
 fi
 
