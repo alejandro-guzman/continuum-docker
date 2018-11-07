@@ -14,31 +14,22 @@ ARG DEBIAN_FRONTEND=noninteractive
 ARG INSTALLER_LINK
 ENV INSTALLER_LINK=${INSTALLER_LINK}
 
-# Encryption keys should be passed in whe running the service
-ENV CONTINUUM_ENCRYPTION_KEY ""
-
 # Release of Continuum to pull
 ENV CONTINUUM_VERSION 18.3.0.67
 
 # Location of Continuum releases
 ENV CONTINUUM_RELEASES https://s3.amazonaws.com/versionone-downloads/continuum
 
-# Install python runtime and utils for installation and runtime
+## Install python runtime and utils for installation and runtime
 RUN apt-get update && apt-get install -y \
     sudo \
     curl \
     python \
     openssh-client \
     openssl \
-    ca-certificates
-
-# Create a Continuum service user
-RUN groupadd --system continuum \
-    && useradd --gid continuum --groups sudo --system continuum \
-    && echo continuum:continuum | chpasswd
-
-# Download the installer and run install script
-RUN set -ex \
+    ca-certificates \
+    # Install Continuum
+    && set -ex \
     && if [ -n "${INSTALLER_LINK}" ]; then \
             export LINK=${INSTALLER_LINK}; \
         else \
@@ -51,6 +42,11 @@ RUN set -ex \
     && sed -i '/source ${WHICHPROFILE}/d' ./install \
     # -m skip data initialization, -p skip starting services, -s silent
     && ./install -m -p -s \
+    # Create continuum service user
+    && groupadd --system continuum \
+    && useradd --gid continuum --groups sudo --system continuum \
+    && echo continuum:continuum | chpasswd \
+    # Change permissions
     && chown -R continuum:continuum /opt/continuum /etc/continuum /var/continuum
 
 ENV CONTINUUM_HOME /opt/continuum/current
@@ -72,12 +68,12 @@ USER continuum
 WORKDIR $CONTINUUM_HOME
 
 # Service health check that ping the Continuum at intervals
-COPY ./docker-scripts/healthcheck.py .
+COPY ./healthcheck.py .
 HEALTHCHECK --start-period=3s --interval=3s --retries=3 \
     CMD ["python", "./healthcheck.py"]
 
-COPY ./docker-scripts/entrypoint.sh .
-ENTRYPOINT ["./entrypoint.sh"]
+COPY ./docker-entrypoint.sh .
+ENTRYPOINT ["./docker-entrypoint.sh"]
 
-COPY ./docker-scripts/start-ctm.sh .
+COPY ./start-ctm.sh .
 CMD ["/bin/bash", "-c", "./start-ctm.sh"]
