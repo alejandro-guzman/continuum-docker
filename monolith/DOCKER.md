@@ -4,7 +4,6 @@
 
 Build image
 ```bash
-link="https://continuum/installer.sh"
 docker image build \
     --tag continuum \
     --file monolith/Dockerfile \
