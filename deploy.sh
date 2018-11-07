@@ -1,42 +1,43 @@
 #!/usr/bin/env bash
 set -ex
 
-base="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+base="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+username="continuumserviceuser"
+organization="cycletime"
+image="continuum"
 
-USERNAME="continuumserviceuser"
-ORGANIZATION="cycletime"
-IMAGE="continuum"
+echo "Logging into Docker using username ${username}"
+cat ${HOME}/.docker/continuumserviceuser-pw | docker login -u ${username} --password-stdin || true
 
+echo "Getting version from ${base}/docker-compose.yml"
 
-echo "[INFO] Logging into Docker using username ${USERNAME}"
-cat ${HOME}/.docker/continuumserviceuser-pw | docker login -u ${USERNAME} --password-stdin || true
+version=$( grep -oP '(\d{2}\.\d\.\d*\.\d*-[S|D]-\d{5})' ${base}/docker-compose.yml ) || true
 
-echo "Getting version from docker-compose.yml"
-# Tag will be the version.revision-story_number
+if [[ -z ${version} ]]; then
+    version=$(grep -oP '(\d{2}\.\d\.\d*\.\d*)' ${base}/docker-compose.yml)
+    echo ${version}
 
-version=$( grep -oP '(\d{2}\.\d\.\d*\.\d*-[S|D]-\d{5})' ./docker-compose.yml ) || true
-echo $version
-
-if [ -z ${version} ]; then
-    version=$(grep -oP '(\d{2}\.\d\.\d*\.\d*)' ./docker-compose.yml)
-    echo $version
-    [ -z ${version} ] && (echo "[ERROR] Could not determine image version" && exit 1)
+    if [[ -z ${version} ]]; then
+        echo "Could not determine image version"
+        exit 1
+    fi
 fi
 
-link=$(grep -oP "(https.*installer\.sh)" ./docker-compose.yml)
-[ -z ${link} ] && (echo "[ERROR] Could not determine image installer link" && exit 1)
+link=$(grep -oP "(https.*installer\.sh)" ${base}/docker-compose.yml)
 
+if [[ -z ${link} ]]; then
+    echo "Could not determine image installer link"
+    exit 1
+fi
 
-docker image build --tag ${IMAGE}:latest --build-arg INSTALLER=${link} ${PWD}
+docker image build --tag ${image}:latest --build-arg INSTALLER=${link} ${PWD}
 
+echo "Tagging image ${image} to repo ${organization}/${image} with ${version}"
+docker image tag ${image}:latest ${organization}/${image}:${version}
 
-echo "[INFO] Tagging image ${IMAGE} to repo ${ORGANIZATION}/${IMAGE} with ${version}"
-docker image tag ${IMAGE}:latest ${ORGANIZATION}/${IMAGE}:${version}
-
-
-echo "[INFO] Pushing image to repo ${ORGANIZATION}"
-docker push ${ORGANIZATION}/${IMAGE}:latest
-docker push ${ORGANIZATION}/${IMAGE}:${version}
+echo "Pushing image to repo ${organization}"
+docker push ${organization}/${image}:latest
+docker push ${organization}/${image}:${version}
 
 
 docker logout
