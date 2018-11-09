@@ -144,4 +144,7 @@ fi
 shelf_file=/var/continuum/ui/cskuisession.shelf
 [ -f ${shelf_file} ] && rm -f ${shelf_file}
 
+echo "Starting Continuum services"
+ctm-start-services && tail -f /var/continuum/log/ctm-ui.log
+
 exec "$@"

@@ -12,7 +12,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 # passed in when building this image, it will default to an official installer
 # specified by CONTINUUM_VERSION
 ARG INSTALLER_LINK
-ENV INSTALLER_LINK=${INSTALLER_LINK}
+ENV INSTALLER_LINK ${INSTALLER_LINK}
 
 # Release of Continuum to pull
 ENV CONTINUUM_VERSION 18.3.0.67
@@ -74,6 +74,3 @@ HEALTHCHECK --start-period=3s --interval=3s --retries=3 \
 
 COPY ./docker-entrypoint.sh .
 ENTRYPOINT ["./docker-entrypoint.sh"]
-
-COPY ./start-ctm.sh .
-CMD ["/bin/bash", "-c", "./start-ctm.sh"]
