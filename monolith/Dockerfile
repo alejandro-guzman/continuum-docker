@@ -12,15 +12,11 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927 \
     && apt-get update && apt-get install -y \
     mongodb-org
 
-ENV RUN_AS_MONOLITH true
+ENV MONOLITH true
 ENV CONTINUUM_ENCRYPTION_KEY defaultkey
 ENV CONTINUUM_MONGODB_SERVER localhost
 ENV CONTINUUM_MONGODB_PORT 27017
 ENV CONTINUUM_MONGODB_NAME continuum
-ENV CONTINUUM_MONGODB_USERNAME continuum
-# continuum encrypted with `defaultkey`
-ENV CONTINUUM_MONGODB_PASSWORD WC52OB8O/MniQ/JRxBrTbw==
-ENV CONTINUUM_MONGODB_AUTH admin
 
 # TODO: continuum user not found even though it was created in the parent image
 # USER continuum

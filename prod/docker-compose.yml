@@ -21,6 +21,8 @@ services:
 
   mongodb:
     image: mongo:3.6-jessie
+    logging:
+      driver: "none"
     environment:
       MONGO_INITDB_ROOT_USERNAME: continuum
       MONGO_INITDB_ROOT_PASSWORD: continuum

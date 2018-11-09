@@ -53,7 +53,6 @@ ENV CONTINUUM_HOME /opt/continuum/current
 ENV PATH=${CONTINUUM_HOME}/common/bin:${CONTINUUM_HOME}/client/bin:${PATH}
 ENV ORACLE_HOME=${CONTINUUM_HOME}/common/lib/instantclient_11_2
 ENV LD_LIBRARY_PATH=${ORACLE_HOME}
-ENV SKIP_DATABASE ""
 
 # Expose logs directory, includes all services and automation
 VOLUME /var/continuum/log
