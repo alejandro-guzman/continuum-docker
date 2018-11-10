@@ -4,22 +4,25 @@ services:
   continuum:
     build:
       context: ..
-      dockerfile: ./prod/Dockerfile
+      dockerfile: ./ossum/Dockerfile
     depends_on:
       - mongodb
-    environment:
-      CONTINUUM_MONOGDB_SERVER: mongodb
+    env_file:
+      - .env
     links:
       - mongodb
     ports:
       - "8080:8080"
       - "8083:8083"
     volumes:
-      - $PWD/logs:/var/continuum/log
+      - $PWD/ossum/logs:/var/continuum/log
 
   mongodb:
     image: mongo:3.6-jessie
     logging:
       driver: "none"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: continuum
+      MONGO_INITDB_ROOT_PASSWORD: continuum
     volumes:
-      - $PWD/data:/data/db
+      - $PWD/ossum/data:/data/db

@@ -3,7 +3,7 @@ FROM ubuntu:16.04
 LABEL maintainer.name="Alejandro Guzman"
 LABEL maintainer.username="@agguzman"
 LABEL maintainer.email="aguzman@collab.net"
-LABEL is-production=""
+LABEL is-production="true"
 
 ARG DEBIAN_FRONTEND=noninteractive
 

@@ -13,6 +13,9 @@ if [[ ! -f "${CONFIG_FILE}" ]]; then
     exit 1
 fi
 
+# This should not be here since it's only in the context of running in Ossum,
+# but it provides a sanity check when starting the container to let the
+# operator know the status of Ossum config.
 if [[ -z ${OSSUM_JWT_ISSUER} || -z ${OSSUM_JWT_AUDIENCE} \
     || -z ${OSSUM_OAUTH_URL} || -z ${OSSUM_OAUTH_CLIENT_ID} \
     || -z ${OSSUM_OAUTH_SECRET} ]]; then
@@ -39,6 +42,7 @@ add_setting rest_api_enable_basicauth ${BASIC_AUTH}
 add_setting ui_enable_tokenauth ${TOKEN_AUTH}
 add_setting msghub_enabled ${MSGHUB}
 add_setting rest_api_allowed_origins ${APPLICATION_URL}
+add_setting jobhandler_debug ${JOB_HANDLER_LOG_LEVEL}
 
 # ############################################################################
 # Database initialization and update
@@ -46,37 +50,29 @@ add_setting rest_api_allowed_origins ${APPLICATION_URL}
 echo "Preparing database configuration"
 
 # Remove mongodb_database setting from config file, environment
-# variables passed in will handle Mongo settings
-sed -i "/mongodb_database/d" ${CONFIG_FILE}
+# variables passed in will handle Mongo settings. This is relevant mostly in
+# the context of Ossum as the default hardcoded in the file is fine for other
+# cases
+if [[ -n "${CONTNIUUM_MONGODB_NAME}" ]]; then
+    sed -i "/mongodb_database/d" ${CONFIG_FILE}
+fi
 
 # If we did not pass an encryption key we exit.
-if [[ -z "${CONTINUUM_ENCRYPTION_KEY}" ]]; then
-    echo "$(basename $0) requires a CONTINUUM_ENCRYPTION_KEY"
-    exit 1
-fi
+if [[ -n "${CONTINUUM_ENCRYPTION_KEY}" ]]; then
+    # Encryption script
+    encrypted_encryption_key=$(${CONTINUUM_HOME}/common/install/ctm-encrypt "${CONTINUUM_ENCRYPTION_KEY}" "")
+    # Replace encryption key with key from environment.
+    if [[ -f "${CONFIG_FILE}" ]] ; then
+        sed -i "s|^\s\skey:.*$|  key: ${encrypted_encryption_key}|" ${CONFIG_FILE}
+    fi
 
-encrypt=${CONTINUUM_HOME}/common/install/ctm-encrypt
-
-# Prevents failure when running against a different version
-# of the encrypt script. The original script uses double optimization
-# when running python script. Note: Not including "|| true" will result in
-# the script exiting prematurely.
-using_original_script=$(grep "#!/opt/continuum/python/bin/python2.7 -OO" ${encrypt} || true)
-
-if [[ -n "${using_original_script}" ]];then
-    # Original script relies on exactly 2 arguments
-    ENCRYPTED_ENCRYPTION_KEY=$(${encrypt} "${CONTINUUM_ENCRYPTION_KEY}" "")
-else
-    # New script uses a named optional parameter for `key`
-    ENCRYPTED_ENCRYPTION_KEY=$(${encrypt} "${CONTINUUM_ENCRYPTION_KEY}" --key "")
-fi
-
-# Replace encryption key with key from environment.
-if [[ -f "${CONFIG_FILE}" ]] ; then
-    sed -i "s|^\s\skey:.*$|  key: ${ENCRYPTED_ENCRYPTION_KEY}|" ${CONFIG_FILE}
 fi
 
 if [[ -n "${MONOLITH}" ]]; then
+    if [[ -z "$(which mongod)" ]]; then
+        echo "Attempting to run as monolith but could not find MongoDB"
+        exit 1
+    fi
     echo "Starting MongoDB"
     run_mongo="mongod --bind_ip localhost --port 27017 --dbpath /data/db"
     $(${run_mongo}) &
@@ -85,30 +81,9 @@ fi
 # On upgrades init_mongodb.py will run again, running into a
 # DuplicateKeyError, failing to change the admin db password out from
 # under you, which is the behavior we want.
-# TODO: We want to add something more robust than relying on the exception
+# We want to add something more robust than relying on the exception
 echo "Initializing and running database upgrades"
-
-init_db=${CONTINUUM_HOME}/common/install/init_mongodb.py
-using_original_initdb=$(grep ".*.add_argument.*\-\-password" ${init_db} || true)
-
-if [[ -n "${using_original_initdb}" ]]; then
-
-    # Encrypt administrator password.
-    if [ -n "${using_original_script}" ];then
-        DEFAULT_ADMIN_PASSWORD=$(${encrypt} "password" "${CONTINUUM_ENCRYPTION_KEY}")
-    else
-        DEFAULT_ADMIN_PASSWORD=$(${encrypt} "password" --key "${CONTINUUM_ENCRYPTION_KEY}")
-    fi
-
-    ${init_db} --password "${DEFAULT_ADMIN_PASSWORD}" \
-    || ${CONTINUUM_HOME}/common/updatedb.py \
-    || true
-
-else
-    ${init_db} \
-    || ${CONTINUUM_HOME}/common/updatedb.py \
-    || true
-fi
+${CONTINUUM_HOME}/common/install/init_mongodb.py || ${CONTINUUM_HOME}/common/updatedb.py || true
 
 # File corruption always causing login issues.
 shelf_file=/var/continuum/ui/cskuisession.shelf
@@ -116,7 +91,13 @@ if [[ -f ${shelf_file} ]]; then
     rm -f ${shelf_file}
 fi
 
+logs=/var/continuum/log
+ui=${logs}/ctm-ui.log
+core=${logs}/ctm-core.log
+jobhandler=${logs}/ctm-jobhandler.log
+msghub=${logs}/ctm-msghub.log
+poller=${logs}/ctm-poller.log
 echo "Starting Continuum services"
-ctm-start-services && tail -f /var/continuum/log/ctm-ui.log
+ctm-start-services && tail -F ${ui} ${core} ${jobhandler} ${msghub} ${poller}
 
 exec "$@"
