@@ -33,7 +33,7 @@ RUN apt-get update && apt-get install -y \
     && if [ -n "${INSTALLER_LINK}" ]; then \
             export LINK=${INSTALLER_LINK}; \
         else \
-            export LINK="${CONTINUUM_RELEASES}/continuum-${CONTINUUM_VERSION}-installer.sh"; \
+            export LINK=${CONTINUUM_RELEASES}/continuum-${CONTINUUM_VERSION}-installer.sh; \
         fi \
     && cd /tmp \
     && curl -o install ${LINK} \
@@ -67,9 +67,9 @@ USER continuum
 WORKDIR $CONTINUUM_HOME
 
 # Service health check that ping the Continuum at intervals
-COPY ./healthcheck.py .
+COPY ./scripts/healthcheck.py .
 HEALTHCHECK --start-period=3s --interval=3s --retries=3 \
     CMD ["python", "./healthcheck.py"]
 
-COPY ./docker-entrypoint.sh .
+COPY ./scripts/docker-entrypoint.sh .
 ENTRYPOINT ["./docker-entrypoint.sh"]

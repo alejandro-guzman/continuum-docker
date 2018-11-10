@@ -1,3 +1,5 @@
+# Know that this is the name of the image that is built using
+# scripts/deploy.sh during CI
 FROM continuum:prod
 
 # Other examples of the available base images include:

@@ -31,6 +31,10 @@ if [[ -n $2 ]]; then
     if [[ -z ${version} ]]; then
         version=$(grep -oP '(\d{2}\.\d\.\d*\.\d)' <<< ${installer_link} || true)
     fi
+    if [[ -z ${version} ]]; then
+        echo "Installer link must be versioned"
+        exit 1a
+    fi
 else
     installer_link=$(grep -oP "(https.*installer\.sh)" ${prod_dockercompose} || true)
     if [[ -n ${installer_link} ]]; then

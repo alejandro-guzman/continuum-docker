@@ -35,12 +35,6 @@ LABEL is-production="false"
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-# ############################################################################
-# A link to the installer can be passed in. This allows private installer for
-# debugging or to deviate from the regular release cadence. If a link is not
-# passed in when building this image, it will default to an official installer
-# specified by CONTINUUM_VERSION
-# ############################################################################
 ARG INSTALLER_LINK
 
 # Release of Continuum to pull
@@ -77,7 +71,7 @@ RUN apt-get update && apt-get install -y \
     && if [ -n "${INSTALLER_LINK}" ]; then \
             export LINK=${INSTALLER_LINK}; \
         else \
-            export LINK="${CONTINUUM_RELEASES}/continuum-${CONTINUUM_VERSION}-installer.sh"; \
+            export LINK=${CONTINUUM_RELEASES}/continuum-${CONTINUUM_VERSION}-installer.sh; \
         fi \
     && cd /tmp \
     && curl -o install ${LINK} \
@@ -144,5 +138,5 @@ WORKDIR $CONTINUUM_HOME
 # 8080 and 8083 (message hub) are what is used to interact with Continuum
 EXPOSE 8080 8083
 
-COPY ./docker-entrypoint.sh /
+COPY ./scripts/docker-entrypoint.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]
