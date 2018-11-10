@@ -1,5 +1,7 @@
 # Continuum (all in one)
-[Find on Dockerhub](https://hub.docker.com/r/agguzman/continuum/)
+[Published on Dockerhub](https://hub.docker.com/r/agguzman/continuum/)
+
+### (monolith/Dockerfile)
 
 This image is an all  in one solution to running Continuum. It is bundled with
 Continuum and MongoDB, running in a non secure fashion. This is NOT intended 

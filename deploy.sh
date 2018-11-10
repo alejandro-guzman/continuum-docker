@@ -1,79 +1,66 @@
 #!/usr/bin/env bash
 set -ex
 
-base="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-username=continuumserviceuser
-organization=cycletime
+usage() {
+    echo -e "\nUsage: deploy.sh <BUILD> <LINK>"
+    echo -e "  BUILD: unique identifier"
+    echo -e "  LINK:  location of installer (optional, will default to versioned link in docker-compose.yml then Dockerfile) \
+    \n         this will be used as the image tag\n"
+}
+
+if [[ -z $1 ]]; then
+    echo "No build number passed"; usage; exit 1
+fi
+
+build_id=$1
+
 image=continuum
-dockerfile=${base}/prod/Dockerfile
-dockercompose=${base}/prod/docker-compose.yml
+organization=cycletime
+username=continuumserviceuser
 
-# Some identifier, in our case the __PINUMBER of a run that help distinguish
-# this version from another of the same branch
-if [ -n $1 ]; then
-    echo "Build number passed: $1"
-    build=$1
-fi
+ossum_dockerfile=./ossum/Dockerfile
+prod_dockerfile=./prod/Dockerfile
+prod_dockercompose=./prod/docker-compose.yml
 
-if [[ -n $2 && $2 == "force-image-version" ]]; then
-    echo "Using image version"
-    force_image_version=true
-fi
-
-echo "Logging into Docker as ${username}"
-cat ${HOME}/.docker/continuumserviceuser-pw \
-    | docker login -u ${username} --password-stdin \
-    || true
-
-if [ -z $force_image_version ]; then
-    # Try to find the installer link in docker-compose.yml. If it's not located
-    # there then we can fall back to the hardcoded official version in the image
-    link=$(grep -oP "(https.*installer\.sh)" ${dockercompose} || true)
-    if [ -z ${link} ]; then
-        echo "Could not determine installer link from ${base}/prod/docker-compose.yml"
-        exit 1
-    fi
-
-    echo "Getting version from ${base}/prod/docker-compose.yml"
-
-    # Is this a feature branch
-    version=$(grep -oP '(\d{2}\.\d\.\d*\.\d*-[S|D]-\d{5})' <<< ${link} || true)
-    echo $version
-
-    if [ -z ${version} ]; then
-        # Is this a development or master branch?
-        version=$(grep -oP '(\d{2}\.\d\.\d*\.\d*)' <<< ${link} || true)
+# ##################
+# Get link
+# ##################
+if [[ -n $2 ]]; then
+    installer_link=$2
+    version=$(grep -oP '(\d{2}\.\d\.\d*\.\d*-[S|D]-\d{5})' <<< ${installer_link} || true)
+    if [[ -z ${version} ]]; then
+        version=$(grep -oP '(\d{2}\.\d\.\d*\.\d)' <<< ${installer_link} || true)
     fi
 else
-    version=$(grep -oP '(ENV CONTINUUM_VERSION .*)' ${dockerfile} | cut -d " " -f 3)
+    installer_link=$(grep -oP "(https.*installer\.sh)" ${prod_dockercompose} || true)
+    if [[ -n ${installer_link} ]]; then
+        version=$(grep -oP '(\d{2}\.\d\.\d*\.\d*-[S|D]-\d{5})' <<< ${installer_link} || true)
+    else
+        echo "Defaulting to installer in prod/Dockerfile"
+        version=$(grep -oP '(ENV CONTINUUM_VERSION .*)' ${prod_dockerfile} | cut -d " " -f 3)
+    fi
 fi
 
-if [ -z ${version} ]; then
-    echo "Could not determine image version"
+if [[ -z ${version} ]]; then
+    echo "Installer and version not determined"
     exit 1
 fi
 
-if [ -n ${build} ]; then
-    version="${version}-${build}"
-fi
+tag=${version}-${build_id}
 
-echo ${version}
+# ############################
+# Build, tag, publish
+# ############################
+docker image build --file ${prod_dockerfile} --tag continuum:prod --build-arg INSTALLER_LINK=${installer_link} --no-cache .
+docker image build --file ${ossum_dockerfile} --tag ${organization}/${image}:latest --no-cache .
 
-dockerfile=${base}/prod/Dockerfile
+docker image tag ${organization}/${image}:latest ${organization}/${image}:${tag}
 
-if [ -z $force_image_version ]; then
-    docker image build --file ${dockerfile} --tag ${image}:latest --build-arg INSTALLER=${link} ${PWD}
-else
-    docker image build --file ${dockerfile} --tag ${image}:latest ${PWD}
-fi
+cat ${HOME}/.docker/continuumserviceuser-pw | docker login -u ${username} --password-stdin || true
 
-echo "Tagging image ${image} to repo ${organization}/${image} with ${version}"
-docker image tag ${image}:latest ${organization}/${image}:${version}
-
-echo "Pushing image to repo ${organization}"
 docker push ${organization}/${image}:latest
-docker push ${organization}/${image}:${version}
+docker push ${organization}/${image}:${tag}
 
+docker images --quiet --filter dangling=true | xargs docker image rm || true
 
 docker logout
-exit 0
