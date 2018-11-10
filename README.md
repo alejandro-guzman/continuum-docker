@@ -87,3 +87,6 @@ Happy dev-ing!
 * Reduce image size by using python base image instead of ubuntu
 * Make configuration mountable to allow changes without needing 
 to rebuild/restart.
+
+edit
+2
