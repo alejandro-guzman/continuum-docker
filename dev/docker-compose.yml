@@ -10,6 +10,8 @@ services:
       - continuum-backend
     links:
       - continuum-backend
+    networks:
+      - frontend
     ports:
       - "3000:3000"
     volumes:
@@ -18,18 +20,14 @@ services:
   continuum-backend:
     build:
       args:
-        INSTALLER: "https://s3.amazonaws.com/versionone-builds/continuum/installer/continuum-18.1.4.224-development-installer.sh"
+        INSTALLER_LINK: ""
       context: ..
       dockerfile: ./dev/Dockerfile
       target: backend
     depends_on:
       - mongodb
-    environment:
-      NODE_ENV: development
-      CONTINUUM_ENCRYPTION_KEY: defaultkey
-      CONTINUUM_MONGODB_SERVER: mongodb
-      CONTINUUM_MONGODB_PORT: 27017
-      CONTINUUM_MONGODB_NAME: continuum
+    env_file:
+      - .env
     links:
       - mongodb
     networks:
@@ -44,6 +42,8 @@ services:
 
   mongodb:
     image: mongo:3.6-jessie
+    logging:
+      driver: "none"
     networks:
       - backend
     volumes:

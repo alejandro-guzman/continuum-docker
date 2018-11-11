@@ -1,0 +1,25 @@
+version: "3.7"
+services:
+
+  continuum:
+    build:
+      context: ..
+      dockerfile: ./prod/Dockerfile
+    depends_on:
+      - mongodb
+    environment:
+      CONTINUUM_MONOGDB_SERVER: mongodb
+    links:
+      - mongodb
+    ports:
+      - "8080:8080"
+      - "8083:8083"
+    volumes:
+      - $PWD/logs:/var/continuum/log
+
+  mongodb:
+    image: mongo:3.6-jessie
+    logging:
+      driver: "none"
+    volumes:
+      - $PWD/data:/data/db
