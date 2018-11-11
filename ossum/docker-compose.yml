@@ -15,7 +15,7 @@ services:
       - "8080:8080"
       - "8083:8083"
     volumes:
-      - $PWD/ossum/logs:/var/continuum/log
+      - ossum-ctm-logs:/var/continuum/log
 
   mongodb:
     image: mongo:3.6-jessie
@@ -25,4 +25,8 @@ services:
       MONGO_INITDB_ROOT_USERNAME: continuum
       MONGO_INITDB_ROOT_PASSWORD: continuum
     volumes:
-      - $PWD/ossum/data:/data/db
+      - ossum-ctm-data:/data/db
+
+volumes:
+  ossum-ctm-logs:
+  ossum-ctm-data:

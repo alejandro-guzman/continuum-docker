@@ -16,6 +16,10 @@ docker image build -t continuum:ossum -f ossum/Dockerfile .
 This is a convenience that stands up the Ossum image in an environment for 
 developing, testing, and debugging.
 
+```bash
+docker-compose -f ./ossum/docker-compose.yml up --build
+```
+
 ##### Steps to get this image in Ossum:
 - Build `prod/Dockerfile` with the target version
     - Versions can be an official release (18.3.0.67, etc.), an unofficial installer 
@@ -31,6 +35,6 @@ developing, testing, and debugging.
 Jenkins job in the test ossum instance and 
 [run a build with the image](https://jenkins.test.ossum.cloud/job/ossum-continuum/build?delay=0sec)
 
-`deploy.sh` is a convenient script to build and publish the image which is 
+`scripts/deploy.sh` is a convenient script to build and publish the image which is 
 also used by the CI server on master pushes.
 

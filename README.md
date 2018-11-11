@@ -18,8 +18,9 @@ Default login: _administrator/password_
 Additionally! You can spin up services for a few integrations we support.
 You can use the `docker-compose.test-bench.yml` in addition with the `docker-compose.yml`.
 ```bash
-docker-compose -f docker-compose.yml -f docker-compose.test-bench.yml up --build
+docker-compose -f ossum/docker-compose.yml -f ossum/docker-compose.test-bench.yml up --build
 ```
+Note: `ossum/docker-compose` is being used but ideally `prod` should be
 * Jenkins default username is `admin` & password is logged to the console, or you can bash into the container and find it at `/var/jenkins_home/secrets/initialAdminPassword`
 * Gitlab default username is `root` & password is created on initial login
 * Artifactory default username is `admin` & password is `password`
