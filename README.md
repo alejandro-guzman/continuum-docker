@@ -1,4 +1,5 @@
 # Continuum in Docker
+[Find on Dockerhub](https://hub.docker.com/r/cycletime/continuum/)
 
 ### Purpose
 `prod/Dockerfile` is the build and environment definition for Continuum. You'll find Continuum's dependencies listed including C libraries, packages, and environment variables.
