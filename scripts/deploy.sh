@@ -34,7 +34,7 @@ if [[ -n $2 ]]; then
     fi
     if [[ -z ${version} ]]; then
         echo "Installer link must be versioned"
-        exit 1a
+        exit 1
     fi
 else
     # Else, let's search for it in prod/docker-compose.yml (think of it like
@@ -43,7 +43,7 @@ else
     if [[ -n ${installer_link} ]]; then
         version=$(grep -oP '(\d{2}\.\d\.\d*\.\d*-[S|D]-\d{5})' <<< ${installer_link} || true)
     else
-        # If we didn't find it there, we';; default to the last public version
+        # If we didn't find it there, we'll default to the last public version
         # listed in the prod/Dockerfile itself
         echo "Defaulting to installer in prod/Dockerfile"
         version=$(grep -oP '(ENV CONTINUUM_VERSION .*)' ${prod_dockerfile} | cut -d " " -f 3)
