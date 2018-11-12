@@ -5,6 +5,8 @@ services:
     build:
       context: ..
       dockerfile: ./prod/Dockerfile
+    environment:
+      CONTINUUM_MONGODB_SERVER: mongodb
     depends_on:
       - mongodb
     links:
@@ -13,11 +15,11 @@ services:
       - "8080:8080"
       - "8083:8083"
     volumes:
-      - $PWD/logs:/var/continuum/log
+      - $PWD/prod/logs:/var/continuum/log
 
   mongodb:
     image: mongo:3.6-jessie
     logging:
       driver: "none"
     volumes:
-      - $PWD/data:/data/db
+      - $PWD/prod/data:/data/db

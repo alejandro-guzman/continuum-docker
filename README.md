@@ -12,7 +12,7 @@ You can also use this for demo purposes as all the changes you make are persiste
 It is not recommended to use for production as a stack deployment is more appropriate. A stack file/deployment documentation will be **coming soon**!
 
 ```bash
-docker-compose -f ossum/docker-compose.yml up --build
+docker-compose -f prod/docker-compose.yml up --build
 ```
 
 Continuum should now be available at http://localhost:8080  
@@ -22,10 +22,9 @@ Additionally! You can spin up services for a few integrations we support.
 You can use the `testlabdocker-compose.test-bench.yml` in addition with the `ossum/docker-compose.yml`.
 
 ```bash
-docker-compose -f ossum/docker-compose.yml -f testlab/docker-compose.test-bench.yml up --build
+docker-compose -f prod/docker-compose.yml -f testlab/docker-compose.test-bench.yml up --build
 ```
 
-Note: `ossum/docker-compose` is being used but ideally `prod` should be
 * Jenkins default username is `admin` & password is logged to the console, or you can bash into the container and find it at `/var/jenkins_home/secrets/initialAdminPassword`
 * Gitlab default username is `root` & password is created on initial login
 * Artifactory default username is `admin` & password is `password`
