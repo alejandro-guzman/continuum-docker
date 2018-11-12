@@ -49,23 +49,17 @@ add_setting jobhandler_debug ${JOB_HANDLER_LOG_LEVEL}
 # ############################################################################
 echo "Preparing database configuration"
 
-# Remove mongodb_database setting from config file, environment
-# variables passed in will handle Mongo settings. This is relevant mostly in
-# the context of Ossum as the default hardcoded in the file is fine for other
-# cases
+# Remove mongodb_database setting from config file if environment contains 
+# database name to use. 
 if [[ -n "${CONTNIUUM_MONGODB_NAME}" ]]; then
     sed -i "/mongodb_database/d" ${CONFIG_FILE}
 fi
 
-# If we did not pass an encryption key we exit.
 if [[ -n "${CONTINUUM_ENCRYPTION_KEY}" ]]; then
-    # Encryption script
+    # Encryption encryption key with default key
     encrypted_encryption_key=$(${CONTINUUM_HOME}/common/install/ctm-encrypt "${CONTINUUM_ENCRYPTION_KEY}" "")
     # Replace encryption key with key from environment.
-    if [[ -f "${CONFIG_FILE}" ]] ; then
-        sed -i "s|^\s\skey:.*$|  key: ${encrypted_encryption_key}|" ${CONFIG_FILE}
-    fi
-
+    sed -i "s|^\s\skey:.*$|  key: ${encrypted_encryption_key}|" ${CONFIG_FILE}
 fi
 
 if [[ -n "${MONOLITH}" ]]; then

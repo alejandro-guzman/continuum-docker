@@ -7,8 +7,6 @@ services:
       dockerfile: ./prod/Dockerfile
     depends_on:
       - mongodb
-    environment:
-      CONTINUUM_MONOGDB_SERVER: mongodb
     links:
       - mongodb
     ports:
