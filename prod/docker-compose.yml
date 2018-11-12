@@ -7,7 +7,7 @@ services:
       dockerfile: ./prod/Dockerfile
     environment:
       CONTINUUM_MONGODB_SERVER: mongodb
-      INSTALLER_LINK: https://s3.amazonaws.com/versionone-builds/continuum/installer/continuum-18.3.0.2-S-66610-testing-image-update-installer.sh
+      INSTALLER_LINK: https://s3.amazonaws.com/versionone-builds/continuum/installer/continuum-18.3.1.1-D-14254-k8s-redeploy-installer.sh
     depends_on:
       - mongodb
     links:
