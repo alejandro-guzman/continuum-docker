@@ -4,11 +4,16 @@ services:
   artifactory:
     image: mattgruter/artifactory
     ports:
-      - '8098:8080'
+      - '9000:8080'
     volumes:
-      - ctm-artifactory-backup:/artifactory/backup
-      - ctm-artifactory-data:/artifactory/data
-      - ctm-artifactory-logs:/artifactory/logs
+      - artifactory-backup:/artifactory/backup
+      - artifactory-data:/artifactory/data
+      - artifactory-logs:/artifactory/logs
+
+  jira:
+    image: cptactionhank/atlassian-jira:latest
+    ports:
+      - "9001:8080"
 
   # To generate a license go to the self service page, link found `here`
   # https://confluence.atlassian.com/bamboo/running-the-setup-wizard-289276851.html
@@ -17,26 +22,26 @@ services:
   bamboo:
     image: cptactionhank/atlassian-bamboo:latest
     ports:
-      - "8085:8085"
+      - "9002:8085"
 
   gitlab:
     image: gitlab/gitlab-ce
     ports:
-      - '8800:80'
-      - '8801:443'
-      - '2288:22'
+      - '9003:80'
+      - '9004:443'
+      - '9005:22'
     volumes:
-      - ctm-gitlab-data:/var/opt/gitlab
-      - ctm-gitlab-config:/etc/gitlab
-      - ctm-gitlab-logs:/var/log/gitlab
+      - gitlab-data:/var/opt/gitlab
+      - gitlab-config:/etc/gitlab
+      - gitlab-logs:/var/log/gitlab
 
   jenkins:
     image: jenkins/jenkins:lts
     ports:
-      - "8888:8080"
+      - "9006:8080"
 #      - "50000:50000"
     volumes:
-      - ctm-jenkins-data:/var/jenkins_home
+      - jenkins-data:/var/jenkins_home
 
   # https://hub.docker.com/r/jetbrains/teamcity-server/
   # https://www.jetbrains.com/teamcity/buy/license.html
@@ -44,20 +49,18 @@ services:
   teamcity:
     image: jetbrains/teamcity-server
     ports:
-      - "8111:8111"
+      - "9007:8111"
     volumes:
-      - ctm-teamcity-data:/data/teamcity_server/datadir
-      - ctm-teamcity-logs:/opt/teamcity/logs
-volumes:
-  ctm-artifactory-backup:
-  ctm-artifactory-data:
-  ctm-artifactory-logs:
-  
-  ctm-gitlab-config:
-  ctm-gitlab-data:
-  ctm-gitlab-logs:
-  
-  ctm-jenkins-data:
+      - teamcity-data:/data/teamcity_server/datadir
+      - teamcity-logs:/opt/teamcity/logs
 
-  ctm-teamcity-data:
-  ctm-teamcity-logs:
+volumes:
+  artifactory-backup:
+  artifactory-data:
+  artifactory-logs:
+  gitlab-config:
+  gitlab-data:
+  gitlab-logs:
+  jenkins-data:
+  teamcity-data:
+  teamcity-logs:
