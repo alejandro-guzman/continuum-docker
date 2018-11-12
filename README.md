@@ -7,7 +7,7 @@ Originally created for Ossum but can be used in other contexts, see [prod](./pro
 
 ### Using Docker Compose
 This will spin up a fully working Continuum instance with a Mongo backend and persistent storage and log files using docker volumes.
-This is useful for testing installers as the `docker-compose.yml` can be modified to use whatever installer you specify.
+This is useful for testing installers as the `prod/docker-compose.yml` can be modified to use whatever installer you specify.
 You can also use this for demo purposes as all the changes you make are persisted.
 It is not recommended to use for production as a stack deployment is more appropriate. A stack file/deployment documentation will be **coming soon**!
 
@@ -19,7 +19,7 @@ Continuum should now be available at http://localhost:8080
 Default login: _administrator/password_  
 
 Additionally! You can spin up services for a few integrations we support.
-You can use the `testlabdocker-compose.test-bench.yml` in addition with the `ossum/docker-compose.yml`.
+You can use the `testlabdocker-compose.test-bench.yml` in addition with the `prod/docker-compose.yml`.
 
 ```bash
 docker-compose -f prod/docker-compose.yml -f testlab/docker-compose.test-bench.yml up --build
