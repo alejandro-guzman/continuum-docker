@@ -26,6 +26,7 @@ prod_dockercompose=./prod/docker-compose.yml
 # Get link
 # ##################
 if [[ -n $2 ]]; then
+    # If an installer link was passed in, we'll use that and get the version/tag from it
     installer_link=$2
     version=$(grep -oP '(\d{2}\.\d\.\d*\.\d*-[S|D]-\d{5})' <<< ${installer_link} || true)
     if [[ -z ${version} ]]; then
@@ -36,15 +37,21 @@ if [[ -n $2 ]]; then
         exit 1a
     fi
 else
+    # Else, let's search for it in prod/docker-compose.yml (think of it like
+    # the same as getting it from the environment)
     installer_link=$(grep -oP "(https.*installer\.sh)" ${prod_dockercompose} || true)
     if [[ -n ${installer_link} ]]; then
         version=$(grep -oP '(\d{2}\.\d\.\d*\.\d*-[S|D]-\d{5})' <<< ${installer_link} || true)
     else
+        # If we didn't find it there, we';; default to the last public version
+        # listed in the prod/Dockerfile itself
         echo "Defaulting to installer in prod/Dockerfile"
         version=$(grep -oP '(ENV CONTINUUM_VERSION .*)' ${prod_dockerfile} | cut -d " " -f 3)
     fi
 fi
 
+# In any of the above cases we needed to extract a version/tag, if nothing was
+# found we exit
 if [[ -z ${version} ]]; then
     echo "Installer and version not determined"
     exit 1
@@ -65,6 +72,6 @@ cat ${HOME}/.docker/continuumserviceuser-pw | docker login -u ${username} --pass
 docker push ${organization}/${image}:latest
 docker push ${organization}/${image}:${tag}
 
-docker images --quiet --filter dangling=true | xargs docker image rm || true
-
 docker logout
+
+docker images --quiet --filter dangling=true | xargs docker image rm || true
