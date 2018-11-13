@@ -16,9 +16,20 @@ fi
 # This should not be here since it's only in the context of running in Ossum,
 # but it provides a sanity check when starting the container to let the
 # operator know the status of Ossum config.
-if [[ -z ${OSSUM_JWT_ISSUER} || -z ${OSSUM_JWT_AUDIENCE} \
-    || -z ${OSSUM_OAUTH_URL} || -z ${OSSUM_OAUTH_CLIENT_ID} \
-    || -z ${OSSUM_OAUTH_SECRET} ]]; then
+if [[ -z ${OSSUM_JWT_ISSUER} \
+    || -z ${OSSUM_JWT_AUDIENCE} \
+    || -z ${OSSUM_OAUTH_URL} \
+    || -z ${OSSUM_OAUTH_CLIENT_ID} \
+    || -z ${OSSUM_OAUTH_SECRET} \
+    || -z ${CONTINUUM_MONOGDB_NAME} \
+    || -z ${CONTINUUM_MONOGDB_REPLICASET_HOSTS} \
+    || -z ${CONTINUUM_MONOGDB_REPLICASET_NAME} \
+    || -z ${CONTINUUM_MONOGDB_USERNAME} \
+    || -z ${CONTINUUM_MONOGDB_PASSWORD} \
+    || -z ${CONTINUUM_MONOGDB_AUTH} \
+    || -z ${CONTINUUM_ENCRYPTION_KEY} \
+    || -z ${APPLICATION_URL} \
+    ]]; then
         echo "Ossum environment not complete"
 fi
 
@@ -43,6 +54,7 @@ add_setting ui_enable_tokenauth ${TOKEN_AUTH}
 add_setting msghub_enabled ${MSGHUB}
 add_setting rest_api_allowed_origins ${APPLICATION_URL}
 add_setting jobhandler_debug ${JOB_HANDLER_LOG_LEVEL}
+add_setting ui_external_url ${UI_EXTERNAL_URL}
 
 # ############################################################################
 # Database initialization and update

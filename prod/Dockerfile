@@ -47,7 +47,11 @@ RUN apt-get update && apt-get install -y \
     && useradd --gid continuum --groups sudo --system continuum \
     && echo continuum:continuum | chpasswd \
     # Change permissions
-    && chown -R continuum:continuum /opt/continuum /etc/continuum /var/continuum
+    && chown -R continuum:continuum /opt/continuum /etc/continuum /var/continuum \
+    # Log directory is created dynamically by the root, not sure wwhy yet,
+    # this is a quick fix
+    && touch /var/continuum/log \
+    && chown -R continuum:continuum /var/continuum/log
 
 ENV CONTINUUM_HOME /opt/continuum/current
 ENV PATH=${CONTINUUM_HOME}/common/bin:${CONTINUUM_HOME}/client/bin:${PATH}
