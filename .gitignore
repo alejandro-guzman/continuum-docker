@@ -1,2 +1,4 @@
 .idea
 continuum-*-installer.sh
+data
+logs

@@ -1,0 +1,32 @@
+version: "3.7"
+services:
+
+  continuum:
+    build:
+      context: ..
+      dockerfile: ./ossum/Dockerfile
+    depends_on:
+      - mongodb
+    env_file:
+      - .env
+    links:
+      - mongodb
+    ports:
+      - "8080:8080"
+      - "8083:8083"
+    volumes:
+      - ossum-ctm-logs-1:/var/continuum/log
+
+  mongodb:
+    image: mongo:3.6-jessie
+    logging:
+      driver: "none"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: devops
+      MONGO_INITDB_ROOT_PASSWORD: 9r9ZyRnZJnB5CqGL5uzY
+    volumes:
+      - ossum-ctm-data-1:/data/db
+
+volumes:
+  ossum-ctm-logs-1:
+  ossum-ctm-data-1:

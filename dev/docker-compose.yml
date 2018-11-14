@@ -1,0 +1,54 @@
+version: "3.7"
+services:
+
+  web:
+    build:
+      context: ..
+      dockerfile: ./dev/Dockerfile
+      target: web
+    networks:
+      - frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - $CONTINUUM_REPO:/app
+
+  api:
+    build:
+      args:
+        INSTALLER_LINK: ""
+      context: ..
+      dockerfile: ./dev/Dockerfile
+      target: api
+    depends_on:
+      - mongodb
+    env_file:
+      - .env
+    links:
+      - mongodb
+    networks:
+      - frontend
+      - backend
+    ports:
+      - "9000:8080"
+      - "8083:8083"
+    volumes:
+      - $CONTINUUM_REPO:/opt/continuum/current
+      - ctm-dev-logs:/var/continuum
+
+  mongodb:
+    image: mongo:3.6-jessie
+    logging:
+      driver: "none"
+    networks:
+      - backend
+    volumes:
+      - ctm-dev-mongodb-data:/data/db
+
+networks:
+  frontend:
+  backend:
+
+volumes:
+  ctm-dev-logs:
+  ctm-dev-mongodb-data:
