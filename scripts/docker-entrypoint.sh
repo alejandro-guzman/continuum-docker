@@ -27,6 +27,7 @@ if [[ -z ${OSSUM_JWT_ISSUER} \
     || -z ${CONTINUUM_MONOGDB_USERNAME} \
     || -z ${CONTINUUM_MONOGDB_PASSWORD} \
     || -z ${CONTINUUM_MONOGDB_AUTH} \
+    || -z ${CONTINUUM_MONGODB_SSL} \
     || -z ${CONTINUUM_ENCRYPTION_KEY} \
     || -z ${APPLICATION_URL} \
     ]]; then

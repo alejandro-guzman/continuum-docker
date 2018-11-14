@@ -10,6 +10,7 @@ FROM continuum:prod
 # or a custom build locally available
 # FROM continuum:S-01001
 
+ENV CONTINUUM_MONGODB_SSL true
 ENV UI_LOG_LEVEL 10
 ENV JOB_HANDLER_LOG_LEVEL 10
 ENV BASIC_AUTH disabled
