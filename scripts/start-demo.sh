@@ -29,6 +29,6 @@ while [[ $# > 0 ]]; do
             echo "Unrecognized argument: $key"
             exit 1
             ;;
-        esac
+    esac
     shift
 done
