@@ -50,11 +50,12 @@ add_setting() {
 }
 
 add_setting ui_debug ${UI_LOG_LEVEL}
+add_setting jobhandler_debug ${JOB_HANDLER_LOG_LEVEL}
+add_setting repopoller_debug ${REPO_POLLER_LOG_LEVEL}
 add_setting rest_api_enable_basicauth ${BASIC_AUTH}
 add_setting ui_enable_tokenauth ${TOKEN_AUTH}
 add_setting msghub_enabled ${MSGHUB}
 add_setting rest_api_allowed_origins ${APPLICATION_URL}
-add_setting jobhandler_debug ${JOB_HANDLER_LOG_LEVEL}
 add_setting ui_external_url ${UI_EXTERNAL_URL}
 
 # ############################################################################
@@ -96,6 +97,11 @@ ${CONTINUUM_HOME}/common/install/init_mongodb.py || ${CONTINUUM_HOME}/common/upd
 shelf_file=/var/continuum/ui/cskuisession.shelf
 if [[ -f ${shelf_file} ]]; then
     rm -f ${shelf_file}
+fi
+
+if [[ -f /etc/continuum/service.conf ]]; then
+    echo -e "\nServices available to run\n"
+    cat /etc/continuum/service.conf
 fi
 
 logs=/var/continuum/log
