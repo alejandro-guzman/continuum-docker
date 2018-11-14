@@ -74,4 +74,4 @@ docker push ${organization}/${image}:${tag}
 
 docker logout
 
-docker images --quiet --filter dangling=true | xargs docker image rm || true
+docker images --quiet --filter dangling=true | xargs docker image rm --force || true
