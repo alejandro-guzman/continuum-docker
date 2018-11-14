@@ -1,15 +1,11 @@
 version: "3.7"
 services:
 
-  continuum-frontend:
+  web:
     build:
       context: ..
       dockerfile: ./dev/Dockerfile
-      target: frontend
-    depends_on:
-      - continuum-backend
-    links:
-      - continuum-backend
+      target: web
     networks:
       - frontend
     ports:
@@ -17,13 +13,13 @@ services:
     volumes:
       - $CONTINUUM_REPO:/app
 
-  continuum-backend:
+  api:
     build:
       args:
         INSTALLER_LINK: ""
       context: ..
       dockerfile: ./dev/Dockerfile
-      target: backend
+      target: api
     depends_on:
       - mongodb
     env_file:

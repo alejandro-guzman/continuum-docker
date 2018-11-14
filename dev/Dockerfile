@@ -1,7 +1,7 @@
 # ############################################################################
 # Frontend dev web app include webpack dev driver with hot module reload
 # ############################################################################
-FROM node:6.14.3-jessie as frontend
+FROM node:6.14.3-jessie as web
 
 LABEL maintainer.name="Alejandro Guzman"
 LABEL maintainer.username="@agguzman"
@@ -12,8 +12,8 @@ WORKDIR $APP
 
 EXPOSE 3000
 
-COPY ./dev/start_frontend.sh /
-ENTRYPOINT ["/start_frontend.sh"]
+COPY ./dev/start_web.sh /
+ENTRYPOINT ["/start_web.sh"]
 
 # ############################################################################
 # Backend application includes all of continuum services
@@ -26,7 +26,7 @@ ENTRYPOINT ["/start_frontend.sh"]
 # from thirdparty or the project directory - it's possible they will get out
 # of sync at some point.
 # ############################################################################
-FROM ubuntu:16.04 as backend
+FROM ubuntu:16.04 as api
 
 LABEL maintainer.name="Alejandro Guzman"
 LABEL maintainer.username="@agguzman"
@@ -55,8 +55,10 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     man \
     vim \
+    ##########################################################################
     # Dev dependencies that support Python packages in development. These are
     # specific to Ubuntu 16.04 and are named different on other platforms
+    ##########################################################################
     libffi-dev \
     libkrb5-dev \
     libldap2-dev \
@@ -118,20 +120,6 @@ ENV CONTINUUM_HOME /opt/continuum/current
 ENV PATH $CONTINUUM_HOME/common/bin:$CONTINUUM_HOME/client/bin:/opt/continuum/python/bin:$PATH
 ENV ORACLE_HOME $CONTINUUM_HOME/common/lib/instantclient_11_2
 ENV LD_LIBRARY_PATH $ORACLE_HOME
-
-# ############################################################################
-# Ossum related environment varaibles are convenient to have for testing JWT
-# authentication against an existing user in the Ossum auth server and Ossum
-# plugin config and pipeline steps.
-# ############################################################################
-ENV OSSUM_OAUTH_URL https://api.test.ossum.cloud/oauth
-ENV OSSUM_JWT_ISSUER urn:cycletime:iss:idp
-ENV OSSUM_JWT_AUDIENCE devops
-ENV OSSUM_OAUTH_CLIENT_ID 690ecc931c3c42e517aef9e40dd636668e6da93c158058da04dc8001650563e0
-ENV OSSUM_OAUTH_SECRET 5b727421517d35bcc6147179e5d7e9429ef52147aa5966b29fa2bd7381703e17
-
-ENV UI_LOG_LEVEL 10
-ENV JOB_HANDLER_LOG_LEVEL 10
 
 WORKDIR $CONTINUUM_HOME
 
