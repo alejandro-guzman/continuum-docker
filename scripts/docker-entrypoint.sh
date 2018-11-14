@@ -64,7 +64,7 @@ echo "Preparing database configuration"
 
 # Remove mongodb_database setting from config file if environment contains 
 # database name to use. 
-if [[ -n "${CONTNIUUM_MONGODB_NAME}" ]]; then
+if [[ -n "${CONTINUUM_MONGODB_NAME}" ]]; then
     sed -i "/mongodb_database/d" ${CONFIG_FILE}
 fi
 
